@@ -33,6 +33,8 @@ class FlightSearchViewModel: ObservableObject {
     @Published var isDestinationActive: Bool = false
     @Published var isDepartureActive: Bool = false
     
+    @Published var isPrefferedFlightPresent: Bool = false
+    
     @Published var isFlightResultsPresented: Bool = false
     
     init(service: DataProtocol = DataService()) {
@@ -49,7 +51,6 @@ class FlightSearchViewModel: ObservableObject {
         
         placesResult.values()
             .map { $0.data.places.edges.map { $0.node } }
-            .print()
             .assign(to: &$airportList)
         
         // manage departure
@@ -116,14 +117,16 @@ class FlightSearchViewModel: ObservableObject {
             .assign(to: &$isConfirmButtonEnabled)
         
         let flightsResult = confirm
-            .flatMapLatest { service.retrieveFlights(query: .init()).materialize() }
+            .flatMapLatest { service.retrieveFlights(query: .init(departure: self.selectedDeparture?.id ?? "",
+                                                                  destination: self.selectedDestination?.id ?? "")).materialize() }
         
         flightsResult.values()
             .compactMap { $0.data.onewayItineraries?.itineraries }
-            // .map { $0.flatMap { $0.bookingOptions?.edges.map { $0.node } ?? [] } }
             .assign(to: &$flightsList)
         
-        $flightsList.dropFirst().map {_ in true }.assign(to: &$isFlightResultsPresented)
+        $flightsList.dropFirst()
+            .map {_ in true }
+            .assign(to: &$isFlightResultsPresented)
         
         Publishers.Merge(
             placesResult.failures(),
@@ -131,6 +134,21 @@ class FlightSearchViewModel: ObservableObject {
         )
             .map { $0.localizedDescription }
             .assign(to: &$showError)
+        
+        //
+        $prefferedFlight
+            .filter { $0 != nil }
+            .dropFirst()
+            .delay(for: 0.3, scheduler: RunLoop.main)
+            .map {_ in true }
+            .assign(to: &$isPrefferedFlightPresent)
+        
+        $prefferedFlight
+            .filter { $0 == nil }
+            .dropFirst()
+            .delay(for: 0.3, scheduler: RunLoop.main)
+            .map {_ in false }
+            .assign(to: &$isPrefferedFlightPresent)
     }
 }
 

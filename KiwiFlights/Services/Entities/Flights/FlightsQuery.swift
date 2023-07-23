@@ -9,8 +9,15 @@ import Foundation
 
 struct FlightsQuery {
     let query: String
+    let departure: String
+    let destination: String
     
-    init() {
+    init(
+        departure: String = "City:brno_cz",
+        destination: String = "City:new-york-city_ny_us"
+    ) {
+        self.departure = departure
+        self.destination = destination
         query =
             """
                 fragment stopDetails on Stop {
@@ -31,8 +38,8 @@ struct FlightsQuery {
                         }, search: {
                         cabinClass: { applyMixedClasses: true, cabinClass: ECONOMY },
                         itinerary: {
-                            source: { ids: ["City:brno_cz"] },
-                            destination: { ids: ["City:new-york-city_ny_us"] },
+                            source: { ids: ["\(departure)"] },
+                            destination: { ids: ["\(destination)"] },
                             outboundDepartureDate: {
                                 start: "2023-11-01T00:00:00",
                                 end: "2023-12-01T23:59:00"

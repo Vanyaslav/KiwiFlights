@@ -8,22 +8,26 @@
 import SwiftUI
 
 struct FlightResultsView: View {
-    @State var flightsList: [FlightsResponse.Itinerary]
+    private let viewModel: FlightSearchViewModel
     
-    init (flightsList: [FlightsResponse.Itinerary]) {
-        self.flightsList = flightsList
+    init(viewModel: FlightSearchViewModel) {
+        self.viewModel = viewModel
     }
     
     var body: some View {
         VStack {
+            Image(systemName: "xmark.circle")
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .onTapGesture {
+                    viewModel.isFlightResultsPresented = false
+                }.padding(.bottom, 16)
+            
             ScrollView {
-                ForEach(flightsList, id: \.self.id) {
+                ForEach(viewModel.flightsList, id: \.self.id) {
                     ItemView($0)
                 }
             }
-        }
-        
-            .padding(32)
+        }.padding(16)
     }
 }
 
@@ -31,19 +35,20 @@ extension FlightResultsView {
     func ItemView(_ data: FlightsResponse.Itinerary) -> some View {
         HStack {
             Text(data.sector?.sectorSegments.first?.segment.source.station.city.name ?? "")
-            Text(data.sector?.sectorSegments.first?.segment.destination.station.city.name ?? "")
+            Text(data.sector?.sectorSegments.last?.segment.destination.station.city.name ?? "")
             Text("\(data.duration ?? 0)")
             Text(data.bookingOptions?.edges.first?.node.price?.formattedValue ?? "")
                 .padding(16)
-                .onTapGesture {
-                    
-                }
+                
+        }.onTapGesture {
+            viewModel.isFlightResultsPresented = false
+            viewModel.prefferedFlight = data
         }
     }
 }
 
 struct FlightResultsView_Previews: PreviewProvider {
     static var previews: some View {
-        FlightResultsView(flightsList: [])
+        FlightResultsView(viewModel: .init())
     }
 }
