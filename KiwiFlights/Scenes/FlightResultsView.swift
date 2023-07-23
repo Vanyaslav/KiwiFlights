@@ -49,6 +49,6 @@ extension FlightResultsView {
 
 struct FlightResultsView_Previews: PreviewProvider {
     static var previews: some View {
-        FlightResultsView(viewModel: .init())
+        FlightResultsView(viewModel: .init(service: DataService(), page: 1))
     }
 }

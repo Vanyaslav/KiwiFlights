@@ -68,8 +68,8 @@ class FlightSearchViewModel: ObservableObject {
             .assign(to: &$isDestinationActive)
         
         let assignedDeparture = selectedDepartureId
-            .map { id in
-                self.airportList.first { $0.id == id }
+            .map { [weak self] id in
+                self?.airportList.first { $0.id == id }
             }
         
         assignedDeparture
@@ -95,8 +95,8 @@ class FlightSearchViewModel: ObservableObject {
             .assign(to: &$isDepartureActive)
         
         let assignedDestination = selectedDestinationId
-            .map { id in
-                self.airportList.first { $0.id == id }
+            .map { [weak self]  id in
+                self?.airportList.first { $0.id == id }
             }
         
         assignedDestination
@@ -122,15 +122,16 @@ class FlightSearchViewModel: ObservableObject {
             .assign(to: &$isConfirmButtonEnabled)
         
         let flightsResult = confirm
-            .flatMapLatest { service.retrieveFlights(query: .init(departure: self.selectedDeparture?.id ?? "",
-                                                                  destination: self.selectedDestination?.id ?? "")).materialize() }
+            .withLatestFrom($selectedDeparture, $selectedDestination)
+            .flatMapLatest { service.retrieveFlights(query: .init(departure: $0.0?.id ?? "",
+                                                                  destination: $0.1?.id ?? "")).materialize() }
         
         flightsResult.values()
             .compactMap { $0.data.onewayItineraries?.itineraries }
             .assign(to: &$flightsList)
         
         $flightsList.dropFirst()
-            .map {_ in true }
+            .map { _ in true }
             .assign(to: &$isFlightResultsPresented)
         
         Publishers.Merge(
