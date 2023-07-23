@@ -11,7 +11,11 @@ import SwiftUI
 struct KiwiFlightsApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TabView {
+                ForEach((1...5), id: \.self) {
+                    FlightSearchView(page: $0)
+                }
+            }.tabViewStyle(.page(indexDisplayMode: .always))
         }
     }
 }

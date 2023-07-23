@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "combineext#sharereplay",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CombineCommunity/CombineExt#sharereplay",
+      "state" : {
+        "revision" : "d7b896fa9ca8b47fa7bcde6b43ef9b70bf8c1f56",
+        "version" : "1.8.1"
+      }
+    },
+    {
+      "identity" : "orbit-swiftui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kiwicom/orbit-swiftui",
+      "state" : {
+        "revision" : "7f7de37319f4b95a2e2232fa79838b1b93aa76d7",
+        "version" : "0.10.3"
+      }
+    }
+  ],
+  "version" : 2
+}
