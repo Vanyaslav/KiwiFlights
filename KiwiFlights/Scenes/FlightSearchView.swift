@@ -76,7 +76,11 @@ struct FlightSearchView: View {
             Button("Confirm") { viewModel.confirm.send() }
                 .disabled(!viewModel.isConfirmButtonEnabled)
                 .opacity(viewModel.isConfirmButtonEnabled ? 1.0: 0.3)
-        }.padding(.all, 32)
+        }
+            .padding(.all, 32)
+            .fullScreenCover(isPresented: $viewModel.isFlightResultsPresented) {
+                FlightResultsView(flightsList: viewModel.flightsList)
+            }
     }
 }
 

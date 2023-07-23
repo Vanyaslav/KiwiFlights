@@ -25,10 +25,13 @@ class FlightSearchViewModel: ObservableObject {
     
     @Published var showError: String?
     @Published var airportList: [PlaceResponse.Node] = []
+    @Published var flightsList: [FlightsResponse.Itinerary] = []
     
     @Published var isConfirmButtonEnabled: Bool = false
     @Published var isDestinationActive: Bool = false
     @Published var isDepartureActive: Bool = false
+    
+    @Published var isFlightResultsPresented: Bool = false
     
     init(service: DataProtocol = DataService()) {
         let departureEntry = $departure.dropFirst()
@@ -46,10 +49,6 @@ class FlightSearchViewModel: ObservableObject {
             .map { $0.data.places.edges.map { $0.node } }
             .print()
             .assign(to: &$airportList)
-        
-        placesResult.failures()
-            .map { $0.localizedDescription }
-            .assign(to: &$showError)
         
         // manage departure
         departureEntry
@@ -113,6 +112,23 @@ class FlightSearchViewModel: ObservableObject {
             .filter { $0.0 != nil && $0.1 != nil }
             .map { _ in true }
             .assign(to: &$isConfirmButtonEnabled)
+        
+        let flightsResult = confirm
+            .flatMapLatest { service.retrieveFlights(query: .init()).materialize() }
+        
+        flightsResult.values()
+            .compactMap { $0.data.onewayItineraries?.itineraries }
+            // .map { $0.flatMap { $0.bookingOptions?.edges.map { $0.node } ?? [] } }
+            .assign(to: &$flightsList)
+        
+        $flightsList.dropFirst().map {_ in true }.assign(to: &$isFlightResultsPresented)
+        
+        Publishers.Merge(
+            placesResult.failures(),
+            flightsResult.failures()
+        )
+            .map { $0.localizedDescription }
+            .assign(to: &$showError)
     }
 }
 

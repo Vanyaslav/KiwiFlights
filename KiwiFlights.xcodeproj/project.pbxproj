@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		A16D4AA42A6C5EB60038B9E5 /* FlightSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D4AA32A6C5EB60038B9E5 /* FlightSearchViewModel.swift */; };
+		A1D463E12A6DA4E800A2D83A /* FlightsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D463E02A6DA4E800A2D83A /* FlightsResponse.swift */; };
+		A1D463E32A6DA88E00A2D83A /* FlightsQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D463E22A6DA88E00A2D83A /* FlightsQuery.swift */; };
+		A1D463E52A6DB12C00A2D83A /* FlightResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D463E42A6DB12C00A2D83A /* FlightResultsView.swift */; };
 		A1E42C232A6C3ACA001D132D /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = A1E42C222A6C3ACA001D132D /* CombineExt */; };
 		A1FB1D3F2A6BBB59001DC537 /* KiwiFlightsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1FB1D3E2A6BBB59001DC537 /* KiwiFlightsApp.swift */; };
 		A1FB1D432A6BBB5B001DC537 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1FB1D422A6BBB5B001DC537 /* Assets.xcassets */; };
@@ -22,6 +25,9 @@
 
 /* Begin PBXFileReference section */
 		A16D4AA32A6C5EB60038B9E5 /* FlightSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightSearchViewModel.swift; sourceTree = "<group>"; };
+		A1D463E02A6DA4E800A2D83A /* FlightsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightsResponse.swift; sourceTree = "<group>"; };
+		A1D463E22A6DA88E00A2D83A /* FlightsQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightsQuery.swift; sourceTree = "<group>"; };
+		A1D463E42A6DB12C00A2D83A /* FlightResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightResultsView.swift; sourceTree = "<group>"; };
 		A1FB1D3B2A6BBB59001DC537 /* KiwiFlights.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KiwiFlights.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1FB1D3E2A6BBB59001DC537 /* KiwiFlightsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KiwiFlightsApp.swift; sourceTree = "<group>"; };
 		A1FB1D422A6BBB5B001DC537 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -46,6 +52,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A1D463DE2A6DA4C400A2D83A /* Places */ = {
+			isa = PBXGroup;
+			children = (
+				A1FB1D592A6BD2C4001DC537 /* PlaceResponse.swift */,
+				A1FB1D5B2A6BD606001DC537 /* PlaceQuery.swift */,
+			);
+			path = Places;
+			sourceTree = "<group>";
+		};
+		A1D463DF2A6DA4D100A2D83A /* Flights */ = {
+			isa = PBXGroup;
+			children = (
+				A1D463E02A6DA4E800A2D83A /* FlightsResponse.swift */,
+				A1D463E22A6DA88E00A2D83A /* FlightsQuery.swift */,
+			);
+			path = Flights;
+			sourceTree = "<group>";
+		};
 		A1FB1D322A6BBB59001DC537 = {
 			isa = PBXGroup;
 			children = (
@@ -95,6 +119,7 @@
 			children = (
 				A1FB1D512A6BC730001DC537 /* FlightSearchView.swift */,
 				A16D4AA32A6C5EB60038B9E5 /* FlightSearchViewModel.swift */,
+				A1D463E42A6DB12C00A2D83A /* FlightResultsView.swift */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -111,8 +136,8 @@
 		A1FB1D582A6BD27A001DC537 /* Entities */ = {
 			isa = PBXGroup;
 			children = (
-				A1FB1D592A6BD2C4001DC537 /* PlaceResponse.swift */,
-				A1FB1D5B2A6BD606001DC537 /* PlaceQuery.swift */,
+				A1D463DF2A6DA4D100A2D83A /* Flights */,
+				A1D463DE2A6DA4C400A2D83A /* Places */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -198,7 +223,10 @@
 			files = (
 				A1FB1D522A6BC730001DC537 /* FlightSearchView.swift in Sources */,
 				A1FB1D3F2A6BBB59001DC537 /* KiwiFlightsApp.swift in Sources */,
+				A1D463E12A6DA4E800A2D83A /* FlightsResponse.swift in Sources */,
+				A1D463E52A6DB12C00A2D83A /* FlightResultsView.swift in Sources */,
 				A16D4AA42A6C5EB60038B9E5 /* FlightSearchViewModel.swift in Sources */,
+				A1D463E32A6DA88E00A2D83A /* FlightsQuery.swift in Sources */,
 				A1FB1D5C2A6BD606001DC537 /* PlaceQuery.swift in Sources */,
 				A1FB1D5A2A6BD2C4001DC537 /* PlaceResponse.swift in Sources */,
 				A1FB1D542A6BCDBC001DC537 /* DataService.swift in Sources */,
