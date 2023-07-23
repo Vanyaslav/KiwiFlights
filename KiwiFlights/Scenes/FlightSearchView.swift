@@ -9,14 +9,9 @@ import SwiftUI
 import Orbit
 
 struct FlightSearchView: View {
-    let page: Int
     @ObservedObject var viewModel: FlightSearchViewModel
     
-    init(
-        page: Int,
-        viewModel: FlightSearchViewModel = .init()
-    ) {
-        self.page = page
+    init(viewModel: FlightSearchViewModel) {
         self.viewModel = viewModel
     }
     
@@ -77,6 +72,7 @@ struct FlightSearchView: View {
                 Button("Confirm") { viewModel.confirm.send() }
                     .disabled(!viewModel.isConfirmButtonEnabled)
                     .opacity(viewModel.isConfirmButtonEnabled ? 1.0: 0.3)
+                    .padding(.bottom, 16)
             }
                 .padding(.all, 32)
                 .fullScreenCover(isPresented: $viewModel.isFlightResultsPresented) {
@@ -99,6 +95,6 @@ struct FlightSearchView: View {
 
 struct FlightSearch_Previews: PreviewProvider {
     static var previews: some View {
-        FlightSearchView(page: 1)
+        FlightSearchView(viewModel: .init(service: DataService(), page: 1))
     }
 }

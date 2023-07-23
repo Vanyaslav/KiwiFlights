@@ -12,6 +12,7 @@ import Foundation
 
 class FlightSearchViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
+    private let page: Int
     // in
     let confirm = PassthroughSubject<Void, Never>()
     let selectedDestinationId = PassthroughSubject<String, Never>()
@@ -37,7 +38,11 @@ class FlightSearchViewModel: ObservableObject {
     
     @Published var isFlightResultsPresented: Bool = false
     
-    init(service: DataProtocol = DataService()) {
+    init(
+        service: DataProtocol,
+        page: Int
+    ) {
+        self.page = page
         let departureEntry = $departure.dropFirst()
         let destinationEntry = $destination.dropFirst()
         
