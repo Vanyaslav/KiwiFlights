@@ -27,6 +27,8 @@ class FlightSearchViewModel: ObservableObject {
     @Published var airportList: [PlaceResponse.Node] = []
     @Published var flightsList: [FlightsResponse.Itinerary] = []
     
+    @Published var prefferedFlight: FlightsResponse.Itinerary?
+    
     @Published var isConfirmButtonEnabled: Bool = false
     @Published var isDestinationActive: Bool = false
     @Published var isDepartureActive: Bool = false

@@ -15,11 +15,14 @@ struct FlightResultsView: View {
     }
     
     var body: some View {
-        ScrollView {
-            ForEach(flightsList, id: \.self.id) {
-                ItemView($0)
+        VStack {
+            ScrollView {
+                ForEach(flightsList, id: \.self.id) {
+                    ItemView($0)
+                }
             }
         }
+        
             .padding(32)
     }
 }
@@ -27,6 +30,8 @@ struct FlightResultsView: View {
 extension FlightResultsView {
     func ItemView(_ data: FlightsResponse.Itinerary) -> some View {
         HStack {
+            Text(data.sector?.sectorSegments.first?.segment.source.station.city.name ?? "")
+            Text(data.sector?.sectorSegments.first?.segment.destination.station.city.name ?? "")
             Text("\(data.duration ?? 0)")
             Text(data.bookingOptions?.edges.first?.node.price?.formattedValue ?? "")
                 .padding(16)

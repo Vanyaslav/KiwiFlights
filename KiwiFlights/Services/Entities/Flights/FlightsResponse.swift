@@ -24,6 +24,7 @@ extension FlightsResponse {
         let id: String
         let duration: Int?
         let bookingOptions: BookingOptions?
+        let sector: Sector?
     }
     
     struct BookingOptions: Decodable {
@@ -41,5 +42,30 @@ extension FlightsResponse {
     struct Price: Decodable {
         let amount: String?
         let formattedValue: String?
+    }
+    
+    struct Sector: Decodable {
+        let sectorSegments: [Segments]
+    }
+    
+    struct Segments: Decodable {
+        let segment: Segment
+    }
+    
+    struct Segment: Decodable {
+        let source: FlightDetails
+        let destination: FlightDetails
+    }
+    
+    struct FlightDetails: Decodable {
+        let station: AirportDetails
+    }
+    
+    struct AirportDetails: Decodable {
+        let city: City
+    }
+    
+    struct City: Decodable {
+        let name: String?
     }
 }
