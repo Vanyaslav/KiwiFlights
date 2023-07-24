@@ -8,6 +8,7 @@
 import Combine
 import CombineExt
 import Foundation
+import OrderedCollections
 
 
 class FlightSearchViewModel: ObservableObject {
@@ -67,7 +68,7 @@ class FlightSearchViewModel: ObservableObject {
             $airportList
         )
             .filter { $0.0 }
-            .map { Array(Set($0.1).subtracting(storage.takenDestinations)) }
+            .map { Array(OrderedSet($0.1).subtracting(storage.takenDestinations)) }
             .assign(to: &$airportToShowList)
         
         Publishers.CombineLatest(
@@ -75,7 +76,7 @@ class FlightSearchViewModel: ObservableObject {
             $airportList
         )
             .filter { $0.0 }
-            .map { Array(Set($0.1).subtracting(storage.takenDepartures)) }
+            .map { Array(OrderedSet($0.1).subtracting(storage.takenDepartures)) }
             .assign(to: &$airportToShowList)
         
         // manage departure

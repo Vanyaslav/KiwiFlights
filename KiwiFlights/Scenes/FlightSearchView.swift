@@ -23,7 +23,6 @@ struct FlightSearchView: View {
     
     var body: some View {
         if !viewModel.isPrefferedFlightPresent {
-            // we need to navigate to the correct page since the view on redrawing always use index 0
             SearchOffer()
         } else {
             FlightOffer()
@@ -50,6 +49,7 @@ extension FlightSearchView {
         }
         .onAppear {
             viewModel.manageInitialValues()
+            // we need to navigate to the correct page since the view on redrawing always use index 0
             _selectedPage.wrappedValue = viewModel.page - 1
         }
     }

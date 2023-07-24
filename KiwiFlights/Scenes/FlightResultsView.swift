@@ -36,6 +36,7 @@ extension FlightResultsView {
         HStack {
             HStack {
                 Text(data.departureCityName)
+                Text("->")
                 Text(data.destinationCityName)
             }.frame(maxWidth: .infinity, alignment: .leading)
             

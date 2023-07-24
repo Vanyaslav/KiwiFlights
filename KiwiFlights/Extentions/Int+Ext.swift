@@ -27,10 +27,10 @@ extension Int {
             
         switch minutes {
         case 0...9:
-            return "\(hours) h : 0\(minutes) m"
+            return "\(hours) h 0\(minutes) m"
 
         default:
-            return "\(hours) h : \(minutes) m"
+            return "\(hours) h \(minutes) m"
         }
     }
 }
