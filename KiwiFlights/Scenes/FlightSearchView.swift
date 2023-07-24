@@ -17,119 +17,143 @@ struct FlightSearchView: View {
     
     var body: some View {
         if !viewModel.isPrefferedFlightPresent {
-            VStack {
-                Text("Choose your route")
-                    .font(.largeTitle)
-                    .padding(.bottom, 32)
-                HStack {
-                    VStack {
-                        Text("Departure")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        TextField("From", text: $viewModel.departure)
-                            .textFieldStyle(.roundedBorder)
-                            .autocorrectionDisabled()
-                        
-                        if viewModel.isDepartureActive {
-                            ScrollView {
-                                ForEach(viewModel.airportToShowList, id: \.self) { item in
-                                    Text(item.name ?? "")
-                                        .tag(item.id)
-                                        .onTapGesture {
-                                            viewModel.selectedDepartureId.send(item.id)
-                                        }
-                                }
-                            }.frame(maxHeight: 200)
-                        }
-                        Spacer()
-                    }
-                    
-                    VStack {
-                        Text("Destination")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        TextField("To", text: $viewModel.destination)
-                            .textFieldStyle(.roundedBorder)
-                            .autocorrectionDisabled()
-                        
-                        if viewModel.isDestinationActive {
-                            ScrollView {
-                                ForEach(viewModel.airportToShowList, id: \.self) { item in
-                                    Text(item.name ?? "")
-                                        .tag(item.id)
-                                        .onTapGesture {
-                                            viewModel.selectedDestinationId.send(item.id)
-                                        }
-                                }
-                            }.frame(maxHeight: 180)
-                        }
-                        Spacer()
-                    }
-                }
-                
-                Spacer()
-                
-                Button("Confirm") { viewModel.confirm.send() }
-                    .disabled(!viewModel.isConfirmButtonEnabled)
-                    .opacity(viewModel.isConfirmButtonEnabled ? 1.0: 0.3)
-                    .padding(.bottom, 16)
-            }
-                .padding(.all, 32)
-                .fullScreenCover(isPresented: $viewModel.isFlightResultsPresented) {
-                    FlightResultsView(viewModel: viewModel)
-                }
-                .onAppear {
-                    viewModel.manageInitialValues()
-                }
+            SearchOffer()
         } else {
-            VStack {
-                Button("New search") {
-                    viewModel.resetState()
-                }
-                
-                Spacer()
-                
-                Text("FLIGHT OFFER")
-                
-                AsyncImage(url: viewModel.prefferedFlightURL) { image in
-                    image.resizable()
-                        .scaledToFill()
-                } placeholder: {
-                    ProgressView()
-                }
-                    .frame(width: 300, height: 300)
-                    .background(Color.gray)
-                    .clipShape(Circle())
-                    .padding(16)
-                
-                Spacer()
-                
-                VStack {
-                    Text(viewModel.departureCityName)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Text(viewModel.destinationCityName)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                }
-                    .font(.largeTitle)
-                    .fontWeight(.semibold)
-                    .padding([.leading, .trailing], 32)
-                
-                Spacer()
-                
-                HStack {
-                    Text(viewModel.stopTitle)
-                    Text("-->")
-                    Text(viewModel.durationTitle)
-                }.font(.subheadline)
-                
-                Text(viewModel.flightPrice)
-                    .font(.subheadline)
-                    .fontWeight(.heavy)
-                
-                Spacer()
-                
-            }.padding(16)
+            FlightOffer()
         }
+    }
+}
+
+extension FlightSearchView {
+    func SearchOffer() -> some View {
+        VStack {
+            Text("Choose your route")
+                .font(.largeTitle)
+                .padding(.bottom, 32)
+            HStack {
+                ManageDeparture()
+                ManageDestination()
+            }
+            Spacer()
+            ComfirmButton()
+        }
+        .padding(.all, 32)
+        .fullScreenCover(isPresented: $viewModel.isFlightResultsPresented) {
+            FlightResultsView(viewModel: viewModel)
+        }
+        .onAppear {
+            viewModel.manageInitialValues()
+        }
+    }
+    
+    func ManageDeparture() -> some View {
+        VStack {
+            Text("Departure")
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
+            TextField("From", text: $viewModel.departure)
+                .textFieldStyle(.roundedBorder)
+                .autocorrectionDisabled()
+            
+            if viewModel.isDepartureActive {
+                ScrollView {
+                    ForEach(viewModel.airportToShowList, id: \.self) { item in
+                        Text(item.name ?? "")
+                            .tag(item.id)
+                            .onTapGesture {
+                                viewModel.selectedDepartureId.send(item.id)
+                            }
+                    }
+                }.frame(maxHeight: 200)
+            }
+            Spacer()
+        }
+    }
+    
+    func ManageDestination() -> some View {
+        VStack {
+            Text("Destination")
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
+            TextField("To", text: $viewModel.destination)
+                .textFieldStyle(.roundedBorder)
+                .autocorrectionDisabled()
+            
+            if viewModel.isDestinationActive {
+                ScrollView {
+                    ForEach(viewModel.airportToShowList, id: \.self) { item in
+                        Text(item.name ?? "")
+                            .tag(item.id)
+                            .onTapGesture {
+                                viewModel.selectedDestinationId.send(item.id)
+                            }
+                    }
+                }.frame(maxHeight: 180)
+            }
+            Spacer()
+        }
+    }
+    
+    func ComfirmButton() -> some View {
+        Button("Confirm") { viewModel.confirm.send() }
+            .disabled(!viewModel.isConfirmButtonEnabled)
+            .opacity(viewModel.isConfirmButtonEnabled ? 1.0: 0.3)
+            .padding(.bottom, 16)
+    }
+}
+
+extension FlightSearchView {
+    func FlightOffer() -> some View {
+        VStack {
+            Button("New search") {
+                viewModel.resetState()
+            }
+            
+            Spacer()
+            Text("FLIGHT OFFER")
+            DestinationImage()
+            Spacer()
+            RouteView()
+            Spacer()
+            
+            HStack {
+                Text(viewModel.stopTitle)
+                Text("-->")
+                Text(viewModel.durationTitle)
+            }.font(.subheadline)
+            
+            Text(viewModel.flightPrice)
+                .font(.subheadline)
+                .fontWeight(.heavy)
+            
+            Spacer()
+            
+        }.padding(16)
+    }
+    
+    func RouteView() -> some View {
+        VStack {
+            Text(viewModel.departureCityName)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Text(viewModel.destinationCityName)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+        }
+            .font(.largeTitle)
+            .fontWeight(.semibold)
+            .padding([.leading, .trailing], 32)
+    }
+    
+    func DestinationImage() -> some View {
+        AsyncImage(url: viewModel.prefferedFlightURL) { image in
+            image.resizable()
+                .scaledToFill()
+        } placeholder: {
+            ProgressView()
+        }
+            .frame(width: 300, height: 300)
+            .background(Color.gray)
+            .clipShape(Circle())
+            .padding(16)
     }
 }
 
