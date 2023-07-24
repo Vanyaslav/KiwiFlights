@@ -40,7 +40,7 @@ extension FlightResultsView {
             }.frame(maxWidth: .infinity, alignment: .leading)
             
             HStack {
-                Text(data.duration?.hoursFormatFromSeconds ?? "")
+                Text(data.duration?.hoursFormatFromSecondsShort ?? "")
                 Text(data.flightPrice)
                     .padding(.leading, 16)
             }.frame(maxWidth: .infinity, alignment: .trailing)
