@@ -24,10 +24,9 @@ class FlightSearchViewModel: ObservableObject {
     // out
     @Published private var selectedDestination: PlaceResponse.Node?
     @Published private var selectedDeparture: PlaceResponse.Node?
-    
+    // 
     @Published var showError: String?
     @Published private var airportList: [PlaceResponse.Node] = []
-    @Published private var airportToDropList: [PlaceResponse.Node] = []
     @Published var airportToShowList: [PlaceResponse.Node] = []
     @Published var flightsList: [FlightsResponse.Itinerary] = []
     
@@ -192,6 +191,11 @@ extension FlightSearchViewModel {
     func manageInitialValues() {
         isDepartureActive = false
         isDestinationActive = false
+    }
+    
+    func assignPrefferedFlight(_ data: FlightsResponse.Itinerary) {
+        isFlightResultsPresented = false
+        prefferedFlight = data
     }
     
     func resetState() {

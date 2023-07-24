@@ -48,8 +48,7 @@ extension FlightResultsView {
         }
         .padding(.bottom, 16)
         .onTapGesture {
-            viewModel.isFlightResultsPresented = false
-            viewModel.prefferedFlight = data
+            viewModel.assignPrefferedFlight(data)
         }
     }
 }
