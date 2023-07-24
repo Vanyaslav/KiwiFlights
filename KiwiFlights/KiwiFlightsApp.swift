@@ -17,13 +17,17 @@ struct KiwiFlightsApp: App {
 }
 
 struct MainView: View {
-    @State private var selectedTab = 0
+    @State var selectedPage: Int = 0
+    
+//    init(selectedPage: Int = 0) {
+//        _selectedPage = selectedPage
+//    }
     
     var body: some View {
-        TabView(selection: $selectedTab) {
+        TabView(selection: $selectedPage) {
             ForEach((1...5), id: \.self) {
                 AppRouter()
-                    .flightSearchView(page: $0)
+                    .flightSearchView(page: $0, selectedPage: $selectedPage)
             }
         }.tabViewStyle(.page(indexDisplayMode: .always))
     }
@@ -36,7 +40,8 @@ class AppRouter {
         self.dataService = dataService
     }
     
-    func flightSearchView(page: Int) -> FlightSearchView {
-        .init(viewModel: .init(service: dataService, page: page))
+    func flightSearchView(page: Int, selectedPage: Binding<Int>) -> FlightSearchView {
+        .init(viewModel: .init(service: dataService, page: page),
+        selectedPage: selectedPage)
     }
 }

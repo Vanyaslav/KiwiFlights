@@ -12,7 +12,7 @@ import Foundation
 
 class FlightSearchViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
-    private let page: Int
+    let page: Int
     // in
     let confirm = PassthroughSubject<Void, Never>()
     let selectedDestinationId = PassthroughSubject<String, Never>()

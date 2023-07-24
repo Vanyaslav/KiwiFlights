@@ -11,13 +11,22 @@ import Orbit
 struct FlightSearchView: View {
     @ObservedObject var viewModel: FlightSearchViewModel
     
-    init(viewModel: FlightSearchViewModel) {
+    @Binding var selectedPage: Int
+    
+    init(
+        viewModel: FlightSearchViewModel,
+        selectedPage: Binding<Int>
+    ) {
         self.viewModel = viewModel
+        _selectedPage = selectedPage
     }
     
     var body: some View {
         if !viewModel.isPrefferedFlightPresent {
-            SearchOffer()
+            // we need to navigate to the correct page since the view on redrawing always use index 0
+            SearchOffer().onAppear {
+                _selectedPage.wrappedValue = viewModel.page - 1
+            }
         } else {
             FlightOffer()
         }
@@ -159,6 +168,6 @@ extension FlightSearchView {
 
 struct FlightSearch_Previews: PreviewProvider {
     static var previews: some View {
-        FlightSearchView(viewModel: .init(service: DataService(), page: 1))
+        FlightSearchView(viewModel: .init(service: DataService(), page: 1), selectedPage: .constant(0))
     }
 }
