@@ -11,13 +11,21 @@ import SwiftUI
 struct KiwiFlightsApp: App {
     var body: some Scene {
         WindowGroup {
-            TabView {
-                ForEach((1...5), id: \.self) {
-                    AppRouter()
-                        .flightSearchView(page: $0)
-                }
-            }.tabViewStyle(.page(indexDisplayMode: .always))
+            MainView()
         }
+    }
+}
+
+struct MainView: View {
+    @State private var selectedTab = 0
+    
+    var body: some View {
+        TabView(selection: $selectedTab) {
+            ForEach((1...5), id: \.self) {
+                AppRouter()
+                    .flightSearchView(page: $0)
+            }
+        }.tabViewStyle(.page(indexDisplayMode: .always))
     }
 }
 
