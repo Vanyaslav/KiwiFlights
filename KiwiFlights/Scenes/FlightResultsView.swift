@@ -19,7 +19,7 @@ struct FlightResultsView: View {
             Image(systemName: "xmark.circle")
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .onTapGesture {
-                    viewModel.isFlightResultsPresented = false
+                    viewModel.dropFlightsList()
                 }.padding(.bottom, 16)
             
             ScrollView {

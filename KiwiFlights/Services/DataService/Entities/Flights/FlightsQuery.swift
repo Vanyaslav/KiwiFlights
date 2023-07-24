@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct FlightsQuery {
+struct FlightsQuery: GraphQueryProtocol {
     let query: String
-    let departure: String
-    let destination: String
-    
+    private let departure: String
+    private let destination: String
+    // possibly date or any other paramater could be dynamic
     init(
         departure: String = "City:brno_cz",
         destination: String = "City:new-york-city_ny_us"

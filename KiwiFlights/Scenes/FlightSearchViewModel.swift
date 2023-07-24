@@ -198,6 +198,12 @@ extension FlightSearchViewModel {
         prefferedFlight = data
     }
     
+    func dropFlightsList() {
+        resetState()
+        isFlightResultsPresented = false
+        manageInitialValues()
+    }
+    
     func resetState() {
         prefferedFlight = nil
         storage.takenDestinations.removeAll { $0.id == selectedDestination?.id }

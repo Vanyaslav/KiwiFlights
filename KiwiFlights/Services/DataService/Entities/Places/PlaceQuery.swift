@@ -7,7 +7,11 @@
 
 import Foundation
 
-struct PlaceQuery {
+protocol GraphQueryProtocol {
+    var query: String { get }
+}
+
+struct PlaceQuery: GraphQueryProtocol {
     let query: String
     private let searchString: String
     
