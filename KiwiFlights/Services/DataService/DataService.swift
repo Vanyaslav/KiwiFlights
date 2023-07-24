@@ -17,7 +17,7 @@ struct Payload: Encodable {
     var query: String
 }
 
-class DataService: DataProtocol {
+final class DataService: DataProtocol {
     func retrieveFlights(query: FlightsQuery) -> AnyPublisher<FlightsResponse, Error> {
         guard let url = URL(string: "https://api.skypicker.com/umbrella/v2/graphql") else {
             return Fail(error: NSError(domain: "Not valid URL", code: 1))

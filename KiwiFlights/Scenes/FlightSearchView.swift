@@ -24,9 +24,7 @@ struct FlightSearchView: View {
     var body: some View {
         if !viewModel.isPrefferedFlightPresent {
             // we need to navigate to the correct page since the view on redrawing always use index 0
-            SearchOffer().onAppear {
-                _selectedPage.wrappedValue = viewModel.page - 1
-            }
+            SearchOffer()
         } else {
             FlightOffer()
         }
@@ -52,6 +50,7 @@ extension FlightSearchView {
         }
         .onAppear {
             viewModel.manageInitialValues()
+            _selectedPage.wrappedValue = viewModel.page - 1
         }
     }
     
@@ -168,6 +167,7 @@ extension FlightSearchView {
 
 struct FlightSearch_Previews: PreviewProvider {
     static var previews: some View {
-        FlightSearchView(viewModel: .init(service: DataService(), page: 1), selectedPage: .constant(0))
+        FlightSearchView(viewModel: .init(service: DataService(), storage: .init(), page: 1),
+                         selectedPage: .constant(0))
     }
 }

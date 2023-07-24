@@ -8,17 +8,17 @@
 import Foundation
 import Combine
 
-class LocalStorage {
+final class LocalStorage {
     func reset() {
         takenDestinations = []
         takenDepartures = []
     }
     
     @UserDefault(wrappedValue: [], "takenDestinations")
-    var takenDestinations: Set<FlightsResponse.City>
+    var takenDestinations: [PlaceResponse.Node]
     
     @UserDefault(wrappedValue: [], "takenDepartures")
-    var takenDepartures: Set<FlightsResponse.City>
+    var takenDepartures: [PlaceResponse.Node]
 }
 
 @propertyWrapper

@@ -12,12 +12,12 @@ struct PlaceResponse: Decodable {
 }
 
 extension PlaceResponse {
-    struct Coordinate: Decodable {
+    struct Coordinate: Codable {
         let lat: Double?
         let lng: Double?
     }
     
-    struct Node: Decodable {
+    struct Node: Codable {
         let id: String
         let legacyId: String
         let name: String?

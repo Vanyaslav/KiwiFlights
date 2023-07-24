@@ -19,10 +19,6 @@ struct KiwiFlightsApp: App {
 struct MainView: View {
     @State var selectedPage: Int = 0
     
-//    init(selectedPage: Int = 0) {
-//        _selectedPage = selectedPage
-//    }
-    
     var body: some View {
         TabView(selection: $selectedPage) {
             ForEach((1...5), id: \.self) {
@@ -34,14 +30,27 @@ struct MainView: View {
 }
 
 class AppRouter {
-    let dataService: DataProtocol
+    private let dataService: DataProtocol
+    private let localStorage: LocalStorage
     
-    init(dataService: DataProtocol = DataService()) {
+    init(
+        dataService: DataProtocol = DataService(),
+        localStorage: LocalStorage = .init()
+    ) {
         self.dataService = dataService
+        self.localStorage = localStorage
+    }
+    
+    deinit {
+        localStorage.reset()
     }
     
     func flightSearchView(page: Int, selectedPage: Binding<Int>) -> FlightSearchView {
-        .init(viewModel: .init(service: dataService, page: page),
-        selectedPage: selectedPage)
+        .init(
+            viewModel: .init(service: dataService,
+                             storage: localStorage,
+                             page: page),
+            selectedPage: selectedPage
+        )
     }
 }

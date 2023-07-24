@@ -12,6 +12,7 @@ import Foundation
 
 class FlightSearchViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
+    private var storage: LocalStorage
     let page: Int
     // in
     let confirm = PassthroughSubject<Void, Never>()
@@ -42,8 +43,10 @@ class FlightSearchViewModel: ObservableObject {
     
     init(
         service: DataProtocol,
+        storage: LocalStorage,
         page: Int
     ) {
+        self.storage = storage
         self.page = page
         let departureEntry = $departure.dropFirst()
         let destinationEntry = $destination.dropFirst()
@@ -60,9 +63,20 @@ class FlightSearchViewModel: ObservableObject {
             .map { $0.data.places.edges.map { $0.node } }
             .assign(to: &$airportList)
         
-        $airportList
-            .dropFirst()
-            //.map { item in self.airportToDropList.map { $0.id != item.id } }
+        Publishers.CombineLatest(
+            $isDestinationActive,
+            $airportList
+        )
+            .filter { $0.0 }
+            .map { Array(Set($0.1).subtracting(storage.takenDestinations)) }
+            .assign(to: &$airportToShowList)
+        
+        Publishers.CombineLatest(
+            $isDepartureActive,
+            $airportList
+        )
+            .filter { $0.0 }
+            .map { Array(Set($0.1).subtracting(storage.takenDepartures)) }
             .assign(to: &$airportToShowList)
         
         // manage departure
@@ -76,7 +90,7 @@ class FlightSearchViewModel: ObservableObject {
         
         let assignedDeparture = selectedDepartureId
             .map { [weak self] id in
-                self?.airportList.first { $0.id == id }
+                self?.airportList.first { $0.id == id && id != self?.selectedDestination?.id }
             }
         
         assignedDeparture
@@ -87,11 +101,10 @@ class FlightSearchViewModel: ObservableObject {
             .compactMap { $0 }
             .assign(to: &$selectedDeparture)
         
-        assignedDeparture
+        confirm.withLatestFrom($selectedDeparture)
             .compactMap { $0 }
-            .sink {
-                self.airportToDropList.append($0)
-            }.store(in: &cancellables)
+            .sink { storage.takenDepartures.append($0) }
+            .store(in: &cancellables)
         
         assignedDeparture
             .delay(for: 0.2, scheduler: RunLoop.main)
@@ -109,22 +122,21 @@ class FlightSearchViewModel: ObservableObject {
         
         let assignedDestination = selectedDestinationId
             .map { [weak self] id in
-                self?.airportList.first { $0.id == id }
+                self?.airportList.first { $0.id == id && id != self?.selectedDeparture?.id }
             }
-        
-        assignedDestination
-            .compactMap { $0?.name }
-            .assign(to: &$destination)
         
         assignedDestination
             .compactMap { $0 }
             .assign(to: &$selectedDestination)
         
-        assignedDestination
+        confirm.withLatestFrom($selectedDestination)
             .compactMap { $0 }
-            .sink {
-                self.airportToDropList.append($0)
-            }.store(in: &cancellables)
+            .sink { storage.takenDestinations.append($0) }
+            .store(in: &cancellables)
+        
+        assignedDestination
+            .compactMap { $0?.name }
+            .assign(to: &$destination)
         
         assignedDestination
             .delay(for: 0.2, scheduler: RunLoop.main)
@@ -164,51 +176,15 @@ class FlightSearchViewModel: ObservableObject {
         $prefferedFlight
             .filter { $0 != nil }
             .delay(for: 0.3, scheduler: RunLoop.main)
-            .map {_ in true }
+            .map { _ in true }
             .assign(to: &$isPrefferedFlightPresent)
         
         $prefferedFlight
             .dropFirst()
             .filter { $0 == nil }
             .delay(for: 0.3, scheduler: RunLoop.main)
-            .map {_ in false }
+            .map { _ in false }
             .assign(to: &$isPrefferedFlightPresent)
-    }
-}
-
-extension FlightSearchViewModel {
-    var prefferedFlightURL: URL? {
-        guard let id = prefferedFlight?.legacyId
-        else { return nil }
-        return URL(string: "https://images.kiwi.com/photos/600x600/\(id).jpg")
-    }
-    
-    var stopsCount: Int {
-        guard let segments = prefferedFlight?.sector?.sectorSegments
-        else { return 0 }
-        return segments.count - 1
-    }
-    
-    var stopTitle: String {
-        stopsCount == 1
-             ? "\(stopsCount) stop"
-             : "\(stopsCount) stops"
-    }
-    
-    var departureCityName: String {
-        prefferedFlight?.departureCityName ?? ""
-    }
-    
-    var destinationCityName: String {
-        prefferedFlight?.destinationCityName ?? ""
-    }
-    
-    var flightPrice: String {
-        prefferedFlight?.flightPrice ?? ""
-    }
-    
-    var durationTitle: String {
-        prefferedFlight?.duration?.hoursFormatFromSeconds ?? ""
     }
 }
 
@@ -220,5 +196,9 @@ extension FlightSearchViewModel {
     
     func resetState() {
         prefferedFlight = nil
+        storage.takenDestinations.removeAll { $0.id == selectedDestination?.id }
+        destination = ""
+        storage.takenDepartures.removeAll { $0.id == selectedDeparture?.id }
+        departure = ""
     }
 }
