@@ -14,7 +14,6 @@ protocol DataProtocol {
 }
 
 struct Payload: Encodable {
-    // var variables: String = "{}"
     var query: String
 }
 

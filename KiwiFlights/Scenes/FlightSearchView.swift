@@ -32,14 +32,14 @@ struct FlightSearchView: View {
                         
                         if viewModel.isDepartureActive {
                             ScrollView {
-                                ForEach(viewModel.airportList, id: \.self) { item in
+                                ForEach(viewModel.airportToShowList, id: \.self) { item in
                                     Text(item.name ?? "")
                                         .tag(item.id)
                                         .onTapGesture {
                                             viewModel.selectedDepartureId.send(item.id)
                                         }
                                 }
-                            }.frame(maxHeight: 180)
+                            }.frame(maxHeight: 200)
                         }
                         Spacer()
                     }
@@ -54,7 +54,7 @@ struct FlightSearchView: View {
                         
                         if viewModel.isDestinationActive {
                             ScrollView {
-                                ForEach(viewModel.airportList, id: \.self) { item in
+                                ForEach(viewModel.airportToShowList, id: \.self) { item in
                                     Text(item.name ?? "")
                                         .tag(item.id)
                                         .onTapGesture {
@@ -79,17 +79,57 @@ struct FlightSearchView: View {
                     FlightResultsView(viewModel: viewModel)
                 }
                 .onAppear {
-                    viewModel.isDepartureActive = false
-                    viewModel.isDestinationActive = false
+                    viewModel.manageInitialValues()
                 }
         } else {
             VStack {
-                Button("New search") { viewModel.prefferedFlight = nil }
-                Text(viewModel.prefferedFlight?.sector?.sectorSegments.first?.segment.source.station.city.name ?? "")
-                Text(viewModel.prefferedFlight?.sector?.sectorSegments.last?.segment.destination.station.city.name ?? "")
-            }
+                Button("New search") {
+                    viewModel.resetState()
+                }
+                
+                Spacer()
+                
+                Text("FLIGHT OFFER")
+                
+                AsyncImage(url: viewModel.prefferedFlightURL) { image in
+                    image.resizable()
+                        .scaledToFill()
+                } placeholder: {
+                    ProgressView()
+                }
+                    .frame(width: 300, height: 300)
+                    .background(Color.gray)
+                    .clipShape(Circle())
+                    .padding(16)
+                
+                Spacer()
+                
+                VStack {
+                    Text(viewModel.departureCityName)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text(viewModel.destinationCityName)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                    .font(.largeTitle)
+                    .fontWeight(.semibold)
+                    .padding([.leading, .trailing], 32)
+                
+                Spacer()
+                
+                HStack {
+                    Text(viewModel.stopTitle)
+                    Text("-->")
+                    Text(viewModel.durationTitle)
+                }.font(.subheadline)
+                
+                Text(viewModel.flightPrice)
+                    .font(.subheadline)
+                    .fontWeight(.heavy)
+                
+                Spacer()
+                
+            }.padding(16)
         }
-        
     }
 }
 

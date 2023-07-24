@@ -25,7 +25,9 @@ class FlightSearchViewModel: ObservableObject {
     @Published private var selectedDeparture: PlaceResponse.Node?
     
     @Published var showError: String?
-    @Published var airportList: [PlaceResponse.Node] = []
+    @Published private var airportList: [PlaceResponse.Node] = []
+    @Published private var airportToDropList: [PlaceResponse.Node] = []
+    @Published var airportToShowList: [PlaceResponse.Node] = []
     @Published var flightsList: [FlightsResponse.Itinerary] = []
     
     @Published var prefferedFlight: FlightsResponse.Itinerary?
@@ -58,6 +60,11 @@ class FlightSearchViewModel: ObservableObject {
             .map { $0.data.places.edges.map { $0.node } }
             .assign(to: &$airportList)
         
+        $airportList
+            .dropFirst()
+            //.map { item in self.airportToDropList.map { $0.id != item.id } }
+            .assign(to: &$airportToShowList)
+        
         // manage departure
         departureEntry
             .map { _ in true }
@@ -81,6 +88,12 @@ class FlightSearchViewModel: ObservableObject {
             .assign(to: &$selectedDeparture)
         
         assignedDeparture
+            .compactMap { $0 }
+            .sink {
+                self.airportToDropList.append($0)
+            }.store(in: &cancellables)
+        
+        assignedDeparture
             .delay(for: 0.2, scheduler: RunLoop.main)
             .map { _ in false }
             .assign(to: &$isDepartureActive)
@@ -95,7 +108,7 @@ class FlightSearchViewModel: ObservableObject {
             .assign(to: &$isDepartureActive)
         
         let assignedDestination = selectedDestinationId
-            .map { [weak self]  id in
+            .map { [weak self] id in
                 self?.airportList.first { $0.id == id }
             }
         
@@ -106,6 +119,12 @@ class FlightSearchViewModel: ObservableObject {
         assignedDestination
             .compactMap { $0 }
             .assign(to: &$selectedDestination)
+        
+        assignedDestination
+            .compactMap { $0 }
+            .sink {
+                self.airportToDropList.append($0)
+            }.store(in: &cancellables)
         
         assignedDestination
             .delay(for: 0.2, scheduler: RunLoop.main)
@@ -144,14 +163,13 @@ class FlightSearchViewModel: ObservableObject {
         //
         $prefferedFlight
             .filter { $0 != nil }
-            .dropFirst()
             .delay(for: 0.3, scheduler: RunLoop.main)
             .map {_ in true }
             .assign(to: &$isPrefferedFlightPresent)
         
         $prefferedFlight
-            .filter { $0 == nil }
             .dropFirst()
+            .filter { $0 == nil }
             .delay(for: 0.3, scheduler: RunLoop.main)
             .map {_ in false }
             .assign(to: &$isPrefferedFlightPresent)
@@ -159,8 +177,48 @@ class FlightSearchViewModel: ObservableObject {
 }
 
 extension FlightSearchViewModel {
-    struct FlightData {
-        let price: Decimal
-        let duration: String
+    var prefferedFlightURL: URL? {
+        guard let id = prefferedFlight?.legacyId
+        else { return nil }
+        return URL(string: "https://images.kiwi.com/photos/600x600/\(id).jpg")
+    }
+    
+    var stopsCount: Int {
+        guard let segments = prefferedFlight?.sector?.sectorSegments
+        else { return 0 }
+        return segments.count - 1
+    }
+    
+    var stopTitle: String {
+        stopsCount == 1
+             ? "\(stopsCount) stop"
+             : "\(stopsCount) stops"
+    }
+    
+    var departureCityName: String {
+        prefferedFlight?.departureCityName ?? ""
+    }
+    
+    var destinationCityName: String {
+        prefferedFlight?.destinationCityName ?? ""
+    }
+    
+    var flightPrice: String {
+        prefferedFlight?.flightPrice ?? ""
+    }
+    
+    var durationTitle: String {
+        prefferedFlight?.duration?.hoursFormatFromSeconds ?? ""
+    }
+}
+
+extension FlightSearchViewModel {
+    func manageInitialValues() {
+        isDepartureActive = false
+        isDestinationActive = false
+    }
+    
+    func resetState() {
+        prefferedFlight = nil
     }
 }

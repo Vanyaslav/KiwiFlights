@@ -65,7 +65,27 @@ extension FlightsResponse {
         let city: City
     }
     
-    struct City: Decodable {
+    struct City: Codable, Hashable {
+        let id: String
+        let legacyId: String?
         let name: String?
+    }
+}
+
+extension FlightsResponse.Itinerary {
+    var departureCityName: String {
+        sector?.sectorSegments.first?.segment.source.station.city.name ?? ""
+    }
+    
+    var destinationCityName: String {
+        sector?.sectorSegments.last?.segment.destination.station.city.name ?? ""
+    }
+    
+    var flightPrice: String {
+        bookingOptions?.edges.first?.node.price?.formattedValue ?? ""
+    }
+    
+    var legacyId: String? {
+        sector?.sectorSegments.last?.segment.destination.station.city.legacyId
     }
 }

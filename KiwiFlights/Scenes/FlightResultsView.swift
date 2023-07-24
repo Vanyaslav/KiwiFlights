@@ -34,13 +34,20 @@ struct FlightResultsView: View {
 extension FlightResultsView {
     func ItemView(_ data: FlightsResponse.Itinerary) -> some View {
         HStack {
-            Text(data.sector?.sectorSegments.first?.segment.source.station.city.name ?? "")
-            Text(data.sector?.sectorSegments.last?.segment.destination.station.city.name ?? "")
-            Text("\(data.duration ?? 0)")
-            Text(data.bookingOptions?.edges.first?.node.price?.formattedValue ?? "")
-                .padding(16)
+            HStack {
+                Text(data.departureCityName)
+                Text(data.destinationCityName)
+            }.frame(maxWidth: .infinity, alignment: .leading)
+            
+            HStack {
+                Text(data.duration?.hoursFormatFromSeconds ?? "")
+                Text(data.flightPrice)
+                    .padding(.leading, 16)
+            }.frame(maxWidth: .infinity, alignment: .trailing)
                 
-        }.onTapGesture {
+        }
+        .padding(.bottom, 16)
+        .onTapGesture {
             viewModel.isFlightResultsPresented = false
             viewModel.prefferedFlight = data
         }
