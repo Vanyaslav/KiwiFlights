@@ -23,7 +23,7 @@ struct MainView: View {
         TabView(selection: $selectedPage) {
             ForEach((1...5), id: \.self) {
                 AppRouter()
-                    .flightSearchView(page: $0, selectedPage: $selectedPage)
+                    .flightSearchView(page: $0)
             }
         }.tabViewStyle(.page(indexDisplayMode: .always))
     }
@@ -45,12 +45,11 @@ class AppRouter {
         localStorage.reset()
     }
     
-    func flightSearchView(page: Int, selectedPage: Binding<Int>) -> FlightSearchView {
+    func flightSearchView(page: Int) -> FlightSearchView {
         .init(
             viewModel: .init(service: dataService,
                              storage: localStorage,
-                             page: page),
-            selectedPage: selectedPage
+                             page: page)
         )
     }
 }

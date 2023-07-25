@@ -47,10 +47,11 @@ extension FlightResultsView {
             }.frame(maxWidth: .infinity, alignment: .trailing)
                 
         }
-        .padding(.bottom, 16)
-        .onTapGesture {
-            viewModel.assignPrefferedFlight(data)
-        }
+            .contentShape(Rectangle())
+            .padding(.bottom, 16)
+            .onTapGesture {
+                viewModel.assignPrefferedFlight(data)
+            }
     }
 }
 

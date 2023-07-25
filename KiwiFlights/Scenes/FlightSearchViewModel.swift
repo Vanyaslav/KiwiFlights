@@ -211,5 +211,6 @@ extension FlightSearchViewModel {
         destination = ""
         storage.takenDepartures.removeAll { $0.id == selectedDeparture?.id }
         departure = ""
+        isConfirmButtonEnabled = false
     }
 }

@@ -6,19 +6,13 @@
 //
 
 import SwiftUI
-import Orbit
+// import Orbit
 
 struct FlightSearchView: View {
     @ObservedObject var viewModel: FlightSearchViewModel
     
-    @Binding var selectedPage: Int
-    
-    init(
-        viewModel: FlightSearchViewModel,
-        selectedPage: Binding<Int>
-    ) {
+    init(viewModel: FlightSearchViewModel) {
         self.viewModel = viewModel
-        _selectedPage = selectedPage
     }
     
     var body: some View {
@@ -43,15 +37,13 @@ extension FlightSearchView {
             Spacer()
             ComfirmButton()
         }
-        .padding(.all, 32)
-        .fullScreenCover(isPresented: $viewModel.isFlightResultsPresented) {
-            FlightResultsView(viewModel: viewModel)
-        }
-        .onAppear {
-            viewModel.manageInitialValues()
-            // we need to navigate to the correct page since the view on redrawing always use index 0
-            _selectedPage.wrappedValue = viewModel.page - 1
-        }
+            .padding(.all, 32)
+            .fullScreenCover(isPresented: $viewModel.isFlightResultsPresented) {
+                FlightResultsView(viewModel: viewModel)
+            }
+            .onAppear {
+                viewModel.manageInitialValues()
+            }
     }
     
     func ManageDeparture() -> some View {
@@ -68,6 +60,7 @@ extension FlightSearchView {
                     ForEach(viewModel.airportToShowList, id: \.self) { item in
                         Text(item.name ?? "")
                             .tag(item.id)
+                            .padding(.bottom, 8)
                             .onTapGesture {
                                 viewModel.selectedDepartureId.send(item.id)
                             }
@@ -92,11 +85,12 @@ extension FlightSearchView {
                     ForEach(viewModel.airportToShowList, id: \.self) { item in
                         Text(item.name ?? "")
                             .tag(item.id)
+                            .padding(.bottom, 8)
                             .onTapGesture {
                                 viewModel.selectedDestinationId.send(item.id)
                             }
                     }
-                }.frame(maxHeight: 180)
+                }.frame(maxHeight: 200)
             }
             Spacer()
         }
@@ -119,6 +113,8 @@ extension FlightSearchView {
             
             Spacer()
             Text("FLIGHT OFFER")
+                .font(.largeTitle)
+                .fontWeight(.thin)
             DestinationImage()
             Spacer()
             RouteView()
@@ -167,7 +163,6 @@ extension FlightSearchView {
 
 struct FlightSearch_Previews: PreviewProvider {
     static var previews: some View {
-        FlightSearchView(viewModel: .init(service: DataService(), storage: .init(), page: 1),
-                         selectedPage: .constant(0))
+        FlightSearchView(viewModel: .init(service: DataService(), storage: .init(), page: 1))
     }
 }
