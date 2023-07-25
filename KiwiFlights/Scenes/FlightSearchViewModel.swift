@@ -26,18 +26,18 @@ class FlightSearchViewModel: ObservableObject {
     @Published private var selectedDestination: PlaceResponse.Node?
     @Published private var selectedDeparture: PlaceResponse.Node?
     // 
-    @Published var showError: String?
+    @Published private (set) var showError: String?
     @Published private var airportList: [PlaceResponse.Node] = []
-    @Published var airportToShowList: [PlaceResponse.Node] = []
-    @Published var flightsList: [FlightsResponse.Itinerary] = []
+    @Published private (set) var airportToShowList: [PlaceResponse.Node] = []
+    @Published private (set) var flightsList: [FlightsResponse.Itinerary] = []
     
-    @Published var preferredFlight: FlightsResponse.Itinerary?
+    @Published private (set) var preferredFlight: FlightsResponse.Itinerary?
     
-    @Published var isConfirmButtonEnabled: Bool = false
-    @Published var isDestinationActive: Bool = false
-    @Published var isDepartureActive: Bool = false
+    @Published private (set) var isConfirmButtonEnabled: Bool = false
+    @Published private (set) var isDestinationActive: Bool = false
+    @Published private (set) var isDepartureActive: Bool = false
     
-    @Published var isPreferredFlightPresent: Bool = false
+    @Published private (set) var isPreferredFlightPresent: Bool = false
     
     @Published var isFlightResultsPresented: Bool = false
     
