@@ -16,7 +16,7 @@ struct FlightSearchView: View {
     }
     
     var body: some View {
-        if !viewModel.isPrefferedFlightPresent {
+        if !viewModel.isPreferredFlightPresent {
             SearchOffer()
         } else {
             FlightOffer()

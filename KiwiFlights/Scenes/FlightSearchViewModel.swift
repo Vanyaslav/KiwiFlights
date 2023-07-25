@@ -31,13 +31,13 @@ class FlightSearchViewModel: ObservableObject {
     @Published var airportToShowList: [PlaceResponse.Node] = []
     @Published var flightsList: [FlightsResponse.Itinerary] = []
     
-    @Published var prefferedFlight: FlightsResponse.Itinerary?
+    @Published var preferredFlight: FlightsResponse.Itinerary?
     
     @Published var isConfirmButtonEnabled: Bool = false
     @Published var isDestinationActive: Bool = false
     @Published var isDepartureActive: Bool = false
     
-    @Published var isPrefferedFlightPresent: Bool = false
+    @Published var isPreferredFlightPresent: Bool = false
     
     @Published var isFlightResultsPresented: Bool = false
     
@@ -173,18 +173,18 @@ class FlightSearchViewModel: ObservableObject {
             .assign(to: &$showError)
         
         //
-        $prefferedFlight
+        $preferredFlight
             .filter { $0 != nil }
             .delay(for: 0.3, scheduler: RunLoop.main)
             .map { _ in true }
-            .assign(to: &$isPrefferedFlightPresent)
+            .assign(to: &$isPreferredFlightPresent)
         
-        $prefferedFlight
+        $preferredFlight
             .dropFirst()
             .filter { $0 == nil }
             .delay(for: 0.3, scheduler: RunLoop.main)
             .map { _ in false }
-            .assign(to: &$isPrefferedFlightPresent)
+            .assign(to: &$isPreferredFlightPresent)
     }
 }
 
@@ -196,7 +196,7 @@ extension FlightSearchViewModel {
     
     func assignPrefferedFlight(_ data: FlightsResponse.Itinerary) {
         isFlightResultsPresented = false
-        prefferedFlight = data
+        preferredFlight = data
     }
     
     func dropFlightsList() {
@@ -206,7 +206,7 @@ extension FlightSearchViewModel {
     }
     
     func resetState() {
-        prefferedFlight = nil
+        preferredFlight = nil
         storage.takenDestinations.removeAll { $0.id == selectedDestination?.id }
         destination = ""
         storage.takenDepartures.removeAll { $0.id == selectedDeparture?.id }

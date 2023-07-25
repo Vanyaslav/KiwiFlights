@@ -9,13 +9,13 @@ import Foundation
 
 extension FlightSearchViewModel {
     var prefferedFlightURL: URL? {
-        guard let id = prefferedFlight?.legacyId
+        guard let id = preferredFlight?.legacyId
         else { return nil }
         return URL(string: "https://images.kiwi.com/photos/600x600/\(id).jpg")
     }
     
     var stopsCount: Int {
-        guard let segments = prefferedFlight?.sector?.sectorSegments
+        guard let segments = preferredFlight?.sector?.sectorSegments
         else { return 0 }
         return segments.count - 1
     }
@@ -27,18 +27,18 @@ extension FlightSearchViewModel {
     }
     
     var departureCityName: String {
-        prefferedFlight?.departureCityName ?? ""
+        preferredFlight?.departureCityName ?? ""
     }
     
     var destinationCityName: String {
-        prefferedFlight?.destinationCityName ?? ""
+        preferredFlight?.destinationCityName ?? ""
     }
     
     var flightPrice: String {
-        prefferedFlight?.flightPrice ?? ""
+        preferredFlight?.flightPrice ?? ""
     }
     
     var durationTitle: String {
-        prefferedFlight?.duration?.hoursFormatFromSeconds ?? ""
+        preferredFlight?.duration?.hoursFormatFromSeconds ?? ""
     }
 }
