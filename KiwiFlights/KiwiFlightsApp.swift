@@ -9,23 +9,13 @@ import SwiftUI
 
 @main
 struct KiwiFlightsApp: App {
-    var body: some Scene {
-        WindowGroup {
-            MainView()
-        }
-    }
-}
-
-struct MainView: View {
     @State var selectedPage: Int = 0
     
-    var body: some View {
-        TabView(selection: $selectedPage) {
-            ForEach((1...5), id: \.self) {
-                AppRouter()
-                    .flightSearchView(page: $0)
-            }
-        }.tabViewStyle(.page(indexDisplayMode: .always))
+    var body: some Scene {
+        WindowGroup {
+            AppRouter()
+                .mainView(selectedPage: $selectedPage)
+        }
     }
 }
 
@@ -43,6 +33,14 @@ class AppRouter {
     
     deinit {
         localStorage.reset()
+    }
+    
+    func mainView(selectedPage: Binding<Int>) -> some View {
+        TabView(selection: selectedPage) {
+            ForEach((1...5), id: \.self) {
+                self.flightSearchView(page: $0)
+            }
+        }.tabViewStyle(.page(indexDisplayMode: .always))
     }
     
     func flightSearchView(page: Int) -> FlightSearchView {
