@@ -14,6 +14,14 @@ final class LocalStorage {
         takenDepartures = []
     }
     
+    func reset(
+        destination: PlaceResponse.Node?,
+        departure: PlaceResponse.Node?
+    ) {
+        takenDestinations.removeAll { $0.id == destination?.id }
+        takenDepartures.removeAll { $0.id == departure?.id }
+    }
+    
     @UserDefault(wrappedValue: [], "takenDestinations")
     var takenDestinations: [PlaceResponse.Node]
     

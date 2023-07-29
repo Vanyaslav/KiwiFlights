@@ -17,6 +17,10 @@ class FlightSearchViewModel: ObservableObject {
     let page: Int
     // in
     let confirm = PassthroughSubject<Void, Never>()
+    let reset = PassthroughSubject<Void, Never>()
+    let manageInitialValues = PassthroughSubject<Void, Never>()
+    let dropFlightsList = PassthroughSubject<Void, Never>()
+    let assignPrefferedFlight = PassthroughSubject<FlightsResponse.Itinerary, Never>()
     
     @Published var selectedDestination: PlaceResponse.Node?
     @Published var selectedDeparture: PlaceResponse.Node?
@@ -48,12 +52,12 @@ class FlightSearchViewModel: ObservableObject {
         self.storage = storage
         self.page = page
         
-        let departureEntry = $departure.dropFirst()
+        let departureEntry = $departure.dropFirst(2)
             .withLatestFrom($airportToShowList) { ($0, $1) }
             .filter { (entry, list) in !list.contains { $0.name == entry } }
             .map { $0.0 }
         
-        let destinationEntry = $destination.dropFirst()
+        let destinationEntry = $destination.dropFirst(2)
             .withLatestFrom($airportToShowList) { ($0, $1) }
             .filter { (entry, list) in !list.contains { $0.name == entry } }
             .map { $0.0 }
@@ -87,16 +91,18 @@ class FlightSearchViewModel: ObservableObject {
             .assign(to: &$airportToShowList)
         
         // manage departure
-        departureEntry
-            .map { _ in true }
-            .assign(to: &$isDepartureActive)
-        
-        departureEntry
-            .map { _ in false }
-            .assign(to: &$isDestinationActive)
+        Publishers.Merge(
+            departureEntry.map { _ in true },
+            Publishers.Merge3(
+                $selectedDeparture.mapToVoid(),
+                destinationEntry.mapToVoid(),
+                manageInitialValues
+            ).map { _ in false }
+            
+        ).assign(to: &$isDepartureActive)
         
         $selectedDeparture
-            .compactMap { $0?.name }
+            .map { $0?.name ?? "" }
             .assign(to: &$departure)
         
         confirm.withLatestFrom($selectedDeparture)
@@ -104,42 +110,35 @@ class FlightSearchViewModel: ObservableObject {
             .sink { storage.takenDepartures.append($0) }
             .store(in: &cancellables)
         
-        $selectedDeparture
-            .delay(for: 0.2, scheduler: RunLoop.main)
-            .map { _ in false }
-            .assign(to: &$isDepartureActive)
-        
         // manage destination
-        destinationEntry
-            .map { _ in true }
-            .assign(to: &$isDestinationActive)
+        Publishers.Merge(
+            destinationEntry.map { _ in true },
+            Publishers.Merge3(
+                departureEntry.mapToVoid(),
+                $selectedDestination.mapToVoid(),
+                manageInitialValues
+            ).map { _ in false }
+        ).assign(to: &$isDestinationActive)
         
-        destinationEntry
-            .map { _ in false }
-            .assign(to: &$isDepartureActive)
+        $selectedDestination
+            .map { $0?.name ?? "" }
+            .assign(to: &$destination)
         
         confirm.withLatestFrom($selectedDestination)
             .compactMap { $0 }
             .sink { storage.takenDestinations.append($0) }
             .store(in: &cancellables)
         
-        $selectedDestination
-            .compactMap { $0?.name }
-            .assign(to: &$destination)
-        
-        $selectedDestination
-            .delay(for: 0.2, scheduler: RunLoop.main)
-            .map { _ in false }
-            .assign(to: &$isDestinationActive)
-        
         //
-        Publishers.CombineLatest(
-            $selectedDeparture,
-            $selectedDestination
-        )
-            .filter { $0.0 != nil && $0.1 != nil }
-            .map { _ in true }
-            .assign(to: &$isConfirmButtonEnabled)
+        Publishers.Merge(
+            Publishers.CombineLatest(
+                $selectedDeparture,
+                $selectedDestination
+            )
+                .filter { $0.0 != nil && $0.1 != nil }
+                .map { _ in true },
+            reset.map { _ in false }
+        ).assign(to: &$isConfirmButtonEnabled)
         
         let flightsResult = confirm
             .withLatestFrom($selectedDeparture, $selectedDestination)
@@ -150,9 +149,13 @@ class FlightSearchViewModel: ObservableObject {
             .compactMap { $0.data.onewayItineraries?.itineraries }
             .assign(to: &$flightsList)
         
-        $flightsList.dropFirst()
-            .map { _ in true }
-            .assign(to: &$isFlightResultsPresented)
+        Publishers.Merge(
+            $flightsList.dropFirst().map { _ in true },
+            Publishers.Merge(
+                dropFlightsList.mapToVoid(),
+                assignPrefferedFlight.mapToVoid()
+            ).map { _ in false }
+        ).assign(to: &$isFlightResultsPresented)
         
         Publishers.Merge(
             placesResult.failures(),
@@ -162,37 +165,31 @@ class FlightSearchViewModel: ObservableObject {
             .assign(to: &$showError)
         
         //
+        assignPrefferedFlight
+            .compactMap { $0 }
+            .assign(to: &$preferredFlight)
+        
         $preferredFlight
             .delay(for: 0.3, scheduler: RunLoop.main)
             .map { $0 != nil }
             .assign(to: &$isPreferredFlightPresent)
-    }
-}
-
-extension FlightSearchViewModel {
-    func manageInitialValues() {
-        isDepartureActive = false
-        isDestinationActive = false
-    }
-    
-    func assignPrefferedFlight(_ data: FlightsResponse.Itinerary) {
-        isFlightResultsPresented = false
-        preferredFlight = data
-    }
-    
-    func dropFlightsList() {
-        resetState()
-        isFlightResultsPresented = false
-        manageInitialValues()
-    }
-    
-    func resetState() {
-        preferredFlight = nil
-        storage.takenDestinations.removeAll { $0.id == selectedDestination?.id }
-        destination = ""
-        selectedDestination = nil
-        storage.takenDepartures.removeAll { $0.id == selectedDeparture?.id }
-        departure = ""
-        selectedDeparture = nil
+        
+        reset.withLatestFrom($selectedDeparture, $selectedDestination)
+            .map { [weak self] departure, destination in
+                storage.reset(destination: destination, departure: departure)
+                
+                self?.preferredFlight = nil
+            }.map { _ in nil }
+            .assign(to: \.selectedDestination, on: self,
+                    and: \.selectedDeparture, on: self,
+                    ownership: .weak)
+            .store(in: &cancellables)
+        
+        dropFlightsList
+            .sink { [weak self] in
+                self?.reset.send()
+                self?.manageInitialValues.send()
+            }
+            .store(in: &cancellables)
     }
 }

@@ -42,7 +42,7 @@ extension FlightSearchView {
                 FlightResultsView(viewModel: viewModel)
             }
             .onAppear {
-                viewModel.manageInitialValues()
+                viewModel.manageInitialValues.send()
             }
     }
     
@@ -108,7 +108,7 @@ extension FlightSearchView {
     func FlightOffer() -> some View {
         VStack {
             Button("New search") {
-                viewModel.resetState()
+                viewModel.reset.send()
             }
             
             Spacer()
