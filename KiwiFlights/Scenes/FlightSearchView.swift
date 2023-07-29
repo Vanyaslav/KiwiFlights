@@ -62,7 +62,7 @@ extension FlightSearchView {
                             .tag(item.id)
                             .padding(.bottom, 8)
                             .onTapGesture {
-                                viewModel.selectedDepartureId.send(item.id)
+                                viewModel.selectedDeparture = item
                             }
                     }
                 }.frame(maxHeight: 200)
@@ -87,7 +87,7 @@ extension FlightSearchView {
                             .tag(item.id)
                             .padding(.bottom, 8)
                             .onTapGesture {
-                                viewModel.selectedDestinationId.send(item.id)
+                                viewModel.selectedDestination = item
                             }
                     }
                 }.frame(maxHeight: 200)

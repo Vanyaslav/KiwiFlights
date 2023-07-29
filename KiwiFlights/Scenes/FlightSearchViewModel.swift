@@ -17,14 +17,13 @@ class FlightSearchViewModel: ObservableObject {
     let page: Int
     // in
     let confirm = PassthroughSubject<Void, Never>()
-    let selectedDestinationId = PassthroughSubject<String, Never>()
-    let selectedDepartureId = PassthroughSubject<String, Never>()
+    
+    @Published var selectedDestination: PlaceResponse.Node?
+    @Published var selectedDeparture: PlaceResponse.Node?
     
     @Published var departure: String = ""
     @Published var destination: String = ""
     // out
-    @Published private var selectedDestination: PlaceResponse.Node?
-    @Published private var selectedDeparture: PlaceResponse.Node?
     // 
     @Published private (set) var showError: String?
     @Published private var airportList: [PlaceResponse.Node] = []
@@ -96,25 +95,16 @@ class FlightSearchViewModel: ObservableObject {
             .map { _ in false }
             .assign(to: &$isDestinationActive)
         
-        let assignedDeparture = selectedDepartureId
-            .map { [weak self] id in
-                self?.airportList.first { $0.id == id && id != self?.selectedDestination?.id }
-            }
-        
-        assignedDeparture
+        $selectedDeparture
             .compactMap { $0?.name }
             .assign(to: &$departure)
-        
-        assignedDeparture
-            .compactMap { $0 }
-            .assign(to: &$selectedDeparture)
         
         confirm.withLatestFrom($selectedDeparture)
             .compactMap { $0 }
             .sink { storage.takenDepartures.append($0) }
             .store(in: &cancellables)
         
-        assignedDeparture
+        $selectedDeparture
             .delay(for: 0.2, scheduler: RunLoop.main)
             .map { _ in false }
             .assign(to: &$isDepartureActive)
@@ -128,25 +118,16 @@ class FlightSearchViewModel: ObservableObject {
             .map { _ in false }
             .assign(to: &$isDepartureActive)
         
-        let assignedDestination = selectedDestinationId
-            .map { [weak self] id in
-                self?.airportList.first { $0.id == id && id != self?.selectedDeparture?.id }
-            }
-        
-        assignedDestination
-            .compactMap { $0 }
-            .assign(to: &$selectedDestination)
-        
         confirm.withLatestFrom($selectedDestination)
             .compactMap { $0 }
             .sink { storage.takenDestinations.append($0) }
             .store(in: &cancellables)
         
-        assignedDestination
+        $selectedDestination
             .compactMap { $0?.name }
             .assign(to: &$destination)
         
-        assignedDestination
+        $selectedDestination
             .delay(for: 0.2, scheduler: RunLoop.main)
             .map { _ in false }
             .assign(to: &$isDestinationActive)
@@ -182,16 +163,8 @@ class FlightSearchViewModel: ObservableObject {
         
         //
         $preferredFlight
-            .filter { $0 != nil }
             .delay(for: 0.3, scheduler: RunLoop.main)
-            .map { _ in true }
-            .assign(to: &$isPreferredFlightPresent)
-        
-        $preferredFlight
-            .dropFirst()
-            .filter { $0 == nil }
-            .delay(for: 0.3, scheduler: RunLoop.main)
-            .map { _ in false }
+            .map { $0 != nil }
             .assign(to: &$isPreferredFlightPresent)
     }
 }
