@@ -36,18 +36,16 @@ class AppRouter {
     }
     
     func mainView(selectedPage: Binding<Int>) -> some View {
-        TabView(selection: selectedPage) {
+        let dataService = dataService
+        let localStorage = localStorage
+        return TabView(selection: selectedPage) {
             ForEach((1...5), id: \.self) {
-                self.flightSearchView(page: $0)
+                FlightSearchView(
+                    viewModel: .init(service: dataService,
+                                     storage: localStorage,
+                                     page: $0)
+                )
             }
         }.tabViewStyle(.page(indexDisplayMode: .always))
-    }
-    
-    func flightSearchView(page: Int) -> FlightSearchView {
-        .init(
-            viewModel: .init(service: dataService,
-                             storage: localStorage,
-                             page: page)
-        )
     }
 }
