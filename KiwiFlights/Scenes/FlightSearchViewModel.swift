@@ -48,8 +48,16 @@ class FlightSearchViewModel: ObservableObject {
     ) {
         self.storage = storage
         self.page = page
+        
         let departureEntry = $departure.dropFirst()
+            .withLatestFrom($airportToShowList) { ($0, $1) }
+            .filter { (entry, list) in !list.contains { $0.name == entry } }
+            .map { $0.0 }
+        
         let destinationEntry = $destination.dropFirst()
+            .withLatestFrom($airportToShowList) { ($0, $1) }
+            .filter { (entry, list) in !list.contains { $0.name == entry } }
+            .map { $0.0 }
         
         let placesResult = Publishers.Merge(
             departureEntry,
@@ -209,8 +217,9 @@ extension FlightSearchViewModel {
         preferredFlight = nil
         storage.takenDestinations.removeAll { $0.id == selectedDestination?.id }
         destination = ""
+        selectedDestination = nil
         storage.takenDepartures.removeAll { $0.id == selectedDeparture?.id }
         departure = ""
-        isConfirmButtonEnabled = false
+        selectedDeparture = nil
     }
 }
