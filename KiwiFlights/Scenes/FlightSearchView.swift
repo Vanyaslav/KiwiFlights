@@ -9,10 +9,10 @@ import SwiftUI
 // import Orbit
 
 struct FlightSearchView: View {
-    @ObservedObject var viewModel: FlightSearchViewModel
+    @StateObject var viewModel: FlightSearchViewModel
     
     init(viewModel: FlightSearchViewModel) {
-        self.viewModel = viewModel
+        _viewModel = .init(wrappedValue: viewModel)
     }
     
     var body: some View {

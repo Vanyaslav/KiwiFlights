@@ -13,7 +13,6 @@ import OrderedCollections
 
 class FlightSearchViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
-    private var storage: LocalStorage
     let page: Int
     // in
     let confirm = PassthroughSubject<Void, Never>()
@@ -49,7 +48,6 @@ class FlightSearchViewModel: ObservableObject {
         storage: LocalStorage,
         page: Int
     ) {
-        self.storage = storage
         self.page = page
         
         let departureEntry = $departure.dropFirst(2)
@@ -74,20 +72,20 @@ class FlightSearchViewModel: ObservableObject {
             .map { $0.data.places.edges.map { $0.node } }
             .assign(to: &$airportList)
         
-        Publishers.CombineLatest(
-            $isDestinationActive,
-            $airportList
+        Publishers.Merge(
+            Publishers.CombineLatest(
+                $isDestinationActive,
+                $airportList
+            )
+                .filter { $0.0 }
+                .map { Array(OrderedSet($0.1).subtracting(storage.takenDestinations)) },
+            Publishers.CombineLatest(
+                $isDepartureActive,
+                $airportList
+            )
+                .filter { $0.0 }
+                .map { Array(OrderedSet($0.1).subtracting(storage.takenDepartures)) }
         )
-            .filter { $0.0 }
-            .map { Array(OrderedSet($0.1).subtracting(storage.takenDestinations)) }
-            .assign(to: &$airportToShowList)
-        
-        Publishers.CombineLatest(
-            $isDepartureActive,
-            $airportList
-        )
-            .filter { $0.0 }
-            .map { Array(OrderedSet($0.1).subtracting(storage.takenDepartures)) }
             .assign(to: &$airportToShowList)
         
         // manage departure
@@ -177,7 +175,6 @@ class FlightSearchViewModel: ObservableObject {
         reset.withLatestFrom($selectedDeparture, $selectedDestination)
             .map { [weak self] departure, destination in
                 storage.reset(destination: destination, departure: departure)
-                
                 self?.preferredFlight = nil
             }.map { _ in nil }
             .assign(to: \.selectedDestination, on: self,
