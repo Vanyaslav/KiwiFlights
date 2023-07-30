@@ -17,6 +17,7 @@
 		A1D463F12A6E9BEE00A2D83A /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = A1D463F02A6E9BEE00A2D83A /* Collections */; };
 		A1D463F32A6E9BEE00A2D83A /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = A1D463F22A6E9BEE00A2D83A /* DequeModule */; };
 		A1D463F52A6E9BEE00A2D83A /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = A1D463F42A6E9BEE00A2D83A /* OrderedCollections */; };
+		A1E2523D2A76EEA300216692 /* Publisher+Bind.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E2523C2A76EEA300216692 /* Publisher+Bind.swift */; };
 		A1E42C232A6C3ACA001D132D /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = A1E42C222A6C3ACA001D132D /* CombineExt */; };
 		A1FB1D3F2A6BBB59001DC537 /* KiwiFlightsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1FB1D3E2A6BBB59001DC537 /* KiwiFlightsApp.swift */; };
 		A1FB1D432A6BBB5B001DC537 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1FB1D422A6BBB5B001DC537 /* Assets.xcassets */; };
@@ -37,6 +38,7 @@
 		A1D463E72A6E626600A2D83A /* Int+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Ext.swift"; sourceTree = "<group>"; };
 		A1D463EB2A6E6A7B00A2D83A /* LocalStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorage.swift; sourceTree = "<group>"; };
 		A1D463ED2A6E7C7F00A2D83A /* FlightSearchViewModel+Titles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FlightSearchViewModel+Titles.swift"; sourceTree = "<group>"; };
+		A1E2523C2A76EEA300216692 /* Publisher+Bind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Bind.swift"; sourceTree = "<group>"; };
 		A1FB1D3B2A6BBB59001DC537 /* KiwiFlights.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KiwiFlights.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1FB1D3E2A6BBB59001DC537 /* KiwiFlightsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KiwiFlightsApp.swift; sourceTree = "<group>"; };
 		A1FB1D422A6BBB5B001DC537 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				A1D463E72A6E626600A2D83A /* Int+Ext.swift */,
+				A1E2523C2A76EEA300216692 /* Publisher+Bind.swift */,
 			);
 			path = Extentions;
 			sourceTree = "<group>";
@@ -264,6 +267,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1E2523D2A76EEA300216692 /* Publisher+Bind.swift in Sources */,
 				A1D463EC2A6E6A7B00A2D83A /* LocalStorage.swift in Sources */,
 				A1FB1D522A6BC730001DC537 /* FlightSearchView.swift in Sources */,
 				A1FB1D3F2A6BBB59001DC537 /* KiwiFlightsApp.swift in Sources */,

@@ -70,8 +70,7 @@ class FlightSearchViewModel: ObservableObject {
         
         placesResult.values()
             .map { $0.data.places.edges.map { $0.node } }
-            .removeDuplicates()
-            .assign(to: &$airportList)
+            .bind(to: &$airportList)
         
         Publishers.Merge(
             Publishers.CombineLatest(
@@ -99,13 +98,11 @@ class FlightSearchViewModel: ObservableObject {
             ).map { _ in false }
             
         )
-            .removeDuplicates()
-            .assign(to: &$isDepartureActive)
+            .bind(to: &$isDepartureActive)
         
         $selectedDeparture
-            .removeDuplicates()
             .map { $0?.name ?? "" }
-            .assign(to: &$departure)
+            .bind(to: &$departure)
         
         confirm.withLatestFrom($selectedDeparture)
             .compactMap { $0 }
@@ -121,8 +118,7 @@ class FlightSearchViewModel: ObservableObject {
                 manageInitialValues
             ).map { _ in false }
         )
-            .removeDuplicates()
-            .assign(to: &$isDestinationActive)
+            .bind(to: &$isDestinationActive)
         
         $selectedDestination
             .removeDuplicates()
@@ -144,8 +140,7 @@ class FlightSearchViewModel: ObservableObject {
                 .map { _ in true },
             reset.map { _ in false }
         )
-            .removeDuplicates()
-            .assign(to: &$isConfirmButtonEnabled)
+            .bind(to: &$isConfirmButtonEnabled)
         
         let flightsResult = confirm
             .withLatestFrom($selectedDeparture, $selectedDestination)
@@ -163,8 +158,7 @@ class FlightSearchViewModel: ObservableObject {
                 assignPrefferedFlight.mapToVoid()
             ).map { _ in false }
         )
-            .removeDuplicates()
-            .assign(to: &$isFlightResultsPresented)
+            .bind(to: &$isFlightResultsPresented)
         
         Publishers.Merge(
             placesResult.failures(),
@@ -182,8 +176,7 @@ class FlightSearchViewModel: ObservableObject {
         $preferredFlight
             .delay(for: 0.3, scheduler: RunLoop.main)
             .map { $0 != nil }
-            .removeDuplicates()
-            .assign(to: &$isPreferredFlightPresent)
+            .bind(to: &$isPreferredFlightPresent)
         
         reset.withLatestFrom($selectedDeparture, $selectedDestination)
             .map { storage.reset(destination: $1, departure: $0) }
