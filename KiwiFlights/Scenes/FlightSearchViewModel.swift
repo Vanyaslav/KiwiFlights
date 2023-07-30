@@ -23,11 +23,10 @@ class FlightSearchViewModel: ObservableObject {
     
     @Published var selectedDestination: PlaceResponse.Node?
     @Published var selectedDeparture: PlaceResponse.Node?
-    
+    // in - out
     @Published var departure: String = ""
     @Published var destination: String = ""
     // out
-    // 
     @Published private (set) var showError: String?
     @Published private var airportList: [PlaceResponse.Node] = []
     @Published private (set) var airportToShowList: [PlaceResponse.Node] = []
@@ -64,12 +63,14 @@ class FlightSearchViewModel: ObservableObject {
             departureEntry,
             destinationEntry
         )
+            .removeDuplicates()
             .throttle(for: 1.5, scheduler: RunLoop.main, latest: true)
             .flatMapLatest { service.retrievePlaces(query: .init(searchString: $0)).materialize() }
             .share()
         
         placesResult.values()
             .map { $0.data.places.edges.map { $0.node } }
+            .removeDuplicates()
             .assign(to: &$airportList)
         
         Publishers.Merge(
@@ -97,9 +98,12 @@ class FlightSearchViewModel: ObservableObject {
                 manageInitialValues
             ).map { _ in false }
             
-        ).assign(to: &$isDepartureActive)
+        )
+            .removeDuplicates()
+            .assign(to: &$isDepartureActive)
         
         $selectedDeparture
+            .removeDuplicates()
             .map { $0?.name ?? "" }
             .assign(to: &$departure)
         
@@ -116,9 +120,12 @@ class FlightSearchViewModel: ObservableObject {
                 $selectedDestination.mapToVoid(),
                 manageInitialValues
             ).map { _ in false }
-        ).assign(to: &$isDestinationActive)
+        )
+            .removeDuplicates()
+            .assign(to: &$isDestinationActive)
         
         $selectedDestination
+            .removeDuplicates()
             .map { $0?.name ?? "" }
             .assign(to: &$destination)
         
@@ -136,7 +143,9 @@ class FlightSearchViewModel: ObservableObject {
                 .filter { $0.0 != nil && $0.1 != nil }
                 .map { _ in true },
             reset.map { _ in false }
-        ).assign(to: &$isConfirmButtonEnabled)
+        )
+            .removeDuplicates()
+            .assign(to: &$isConfirmButtonEnabled)
         
         let flightsResult = confirm
             .withLatestFrom($selectedDeparture, $selectedDestination)
@@ -150,10 +159,12 @@ class FlightSearchViewModel: ObservableObject {
         Publishers.Merge(
             $flightsList.dropFirst().map { _ in true },
             Publishers.Merge(
-                dropFlightsList.mapToVoid(),
+                dropFlightsList,
                 assignPrefferedFlight.mapToVoid()
             ).map { _ in false }
-        ).assign(to: &$isFlightResultsPresented)
+        )
+            .removeDuplicates()
+            .assign(to: &$isFlightResultsPresented)
         
         Publishers.Merge(
             placesResult.failures(),
@@ -163,30 +174,27 @@ class FlightSearchViewModel: ObservableObject {
             .assign(to: &$showError)
         
         //
-        assignPrefferedFlight
-            .compactMap { $0 }
-            .assign(to: &$preferredFlight)
+        Publishers.Merge(
+            assignPrefferedFlight.compactMap { $0 },
+            reset.map { _ in nil }
+        ).assign(to: &$preferredFlight)
         
         $preferredFlight
             .delay(for: 0.3, scheduler: RunLoop.main)
             .map { $0 != nil }
+            .removeDuplicates()
             .assign(to: &$isPreferredFlightPresent)
         
         reset.withLatestFrom($selectedDeparture, $selectedDestination)
-            .map { [weak self] departure, destination in
-                storage.reset(destination: destination, departure: departure)
-                self?.preferredFlight = nil
-            }.map { _ in nil }
+            .map { storage.reset(destination: $1, departure: $0) }
+            .map { _ in nil }
             .assign(to: \.selectedDestination, on: self,
                     and: \.selectedDeparture, on: self,
                     ownership: .weak)
             .store(in: &cancellables)
         
         dropFlightsList
-            .sink { [weak self] in
-                self?.reset.send()
-                self?.manageInitialValues.send()
-            }
+            .subscribe(reset)
             .store(in: &cancellables)
     }
 }
