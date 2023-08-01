@@ -19,7 +19,7 @@ struct KiwiFlightsApp: App {
     }
 }
 
-class AppRouter {
+final class AppRouter: ObservableObject {
     private let dataService: DataProtocol
     private let localStorage: LocalStorage
     
@@ -29,9 +29,7 @@ class AppRouter {
     ) {
         self.dataService = dataService
         self.localStorage = localStorage
-    }
-    
-    deinit {
+        
         localStorage.reset()
     }
     
@@ -46,6 +44,12 @@ class AppRouter {
                                      page: $0)
                 )
             }
-        }.tabViewStyle(.page(indexDisplayMode: .always))
+        }
+            .tabViewStyle(.page(indexDisplayMode: .always))
+            .environmentObject(self)
+    }
+    
+    func showFlightResultView(_ viewModel: FlightResultsViewModel) -> some View {
+        FlightResultsView(viewModel: viewModel)
     }
 }

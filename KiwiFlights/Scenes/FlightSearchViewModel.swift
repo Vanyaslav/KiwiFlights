@@ -18,8 +18,6 @@ class FlightSearchViewModel: ObservableObject {
     let confirm = PassthroughSubject<Void, Never>()
     let reset = PassthroughSubject<Void, Never>()
     let manageInitialValues = PassthroughSubject<Void, Never>()
-    let dropFlightsList = PassthroughSubject<Void, Never>()
-    let assignPrefferedFlight = PassthroughSubject<FlightsResponse.Itinerary, Never>()
     
     @Published var selectedDestination: PlaceResponse.Node?
     @Published var selectedDeparture: PlaceResponse.Node?
@@ -39,8 +37,9 @@ class FlightSearchViewModel: ObservableObject {
     @Published private (set) var isDepartureActive: Bool = false
     
     @Published private (set) var isPreferredFlightPresent: Bool = false
-    
     @Published var isFlightResultsPresented: Bool = false
+    
+    let resultsViewModel = FlightResultsViewModel()
     
     init(
         service: DataProtocol,
@@ -73,20 +72,21 @@ class FlightSearchViewModel: ObservableObject {
             .bind(to: &$airportList)
         
         Publishers.Merge(
-            Publishers.CombineLatest(
+            Publishers.CombineLatest3(
                 $isDestinationActive,
-                $airportList
+                $airportList,
+                storage.$takenDestinations
             )
                 .filter { $0.0 }
-                .map { Array(OrderedSet($0.1).subtracting(storage.takenDestinations)) },
-            Publishers.CombineLatest(
+                .map { Array(OrderedSet($0.1).subtracting($0.2)) },
+            Publishers.CombineLatest3(
                 $isDepartureActive,
-                $airportList
+                $airportList,
+                storage.$takenDepartures
             )
                 .filter { $0.0 }
-                .map { Array(OrderedSet($0.1).subtracting(storage.takenDepartures)) }
-        )
-            .assign(to: &$airportToShowList)
+                .map { Array(OrderedSet($0.1).subtracting($0.2)) }
+        ).bind(to: &$airportToShowList)
         
         // manage departure
         Publishers.Merge(
@@ -96,9 +96,7 @@ class FlightSearchViewModel: ObservableObject {
                 destinationEntry.mapToVoid(),
                 manageInitialValues
             ).map { _ in false }
-            
-        )
-            .bind(to: &$isDepartureActive)
+        ).bind(to: &$isDepartureActive)
         
         $selectedDeparture
             .map { $0?.name ?? "" }
@@ -117,13 +115,11 @@ class FlightSearchViewModel: ObservableObject {
                 $selectedDestination.mapToVoid(),
                 manageInitialValues
             ).map { _ in false }
-        )
-            .bind(to: &$isDestinationActive)
+        ).bind(to: &$isDestinationActive)
         
         $selectedDestination
-            .removeDuplicates()
             .map { $0?.name ?? "" }
-            .assign(to: &$destination)
+            .bind(to: &$destination)
         
         confirm.withLatestFrom($selectedDestination)
             .compactMap { $0 }
@@ -139,26 +135,27 @@ class FlightSearchViewModel: ObservableObject {
                 .filter { $0.0 != nil && $0.1 != nil }
                 .map { _ in true },
             reset.map { _ in false }
-        )
-            .bind(to: &$isConfirmButtonEnabled)
+        ).bind(to: &$isConfirmButtonEnabled)
         
         let flightsResult = confirm
             .withLatestFrom($selectedDeparture, $selectedDestination)
-            .flatMapLatest { service.retrieveFlights(query: .init(departure: $0.0?.id ?? "",
-                                                                  destination: $0.1?.id ?? "")).materialize() }
+            .compactMap { ($0.0?.id , $0.1?.id) as? (String, String) }
+            .flatMapLatest { service.retrieveFlights(query: .init(departure: $0,
+                                                                  destination: $1)).materialize() }
+            .share()
         
         flightsResult.values()
             .compactMap { $0.data.onewayItineraries?.itineraries }
             .assign(to: &$flightsList)
         
+        $flightsList
+            .assign(to: \.list, on: resultsViewModel)
+            .store(in: &cancellables)
+        
         Publishers.Merge(
-            $flightsList.dropFirst().map { _ in true },
-            Publishers.Merge(
-                dropFlightsList,
-                assignPrefferedFlight.mapToVoid()
-            ).map { _ in false }
-        )
-            .bind(to: &$isFlightResultsPresented)
+            $preferredFlight.map { _ in false },
+            $flightsList.dropFirst().map { _ in true }
+        ).bind(to: &$isFlightResultsPresented)
         
         Publishers.Merge(
             placesResult.failures(),
@@ -169,7 +166,7 @@ class FlightSearchViewModel: ObservableObject {
         
         //
         Publishers.Merge(
-            assignPrefferedFlight.compactMap { $0 },
+            resultsViewModel.assignPrefferedFlight.compactMap { $0 },
             reset.map { _ in nil }
         ).assign(to: &$preferredFlight)
         
@@ -186,7 +183,7 @@ class FlightSearchViewModel: ObservableObject {
                     ownership: .weak)
             .store(in: &cancellables)
         
-        dropFlightsList
+        resultsViewModel.dropFlightsList
             .subscribe(reset)
             .store(in: &cancellables)
     }

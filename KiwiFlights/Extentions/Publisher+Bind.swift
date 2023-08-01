@@ -9,9 +9,7 @@ import Foundation
 import Combine
 
 extension Publisher where Output: Equatable {
-    func bind<T>(
-        to publisher: inout Published<T>.Publisher
-    ) where T: Equatable {
+    func bind<T>(to publisher: inout Published<T>.Publisher) where T: Equatable {
         removeDuplicates()
             .ignoreFailure()
             .receive(on: DispatchQueue.main)

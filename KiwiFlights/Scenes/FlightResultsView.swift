@@ -7,23 +7,25 @@
 
 import SwiftUI
 
+
 struct FlightResultsView: View {
-    private let viewModel: FlightSearchViewModel
+    @ObservedObject
+    private var viewModel: FlightResultsViewModel
     
-    init(viewModel: FlightSearchViewModel) {
-        self.viewModel = viewModel
+    init(viewModel: FlightResultsViewModel) {
+        _viewModel = .init(wrappedValue: viewModel)
     }
     
     var body: some View {
         VStack {
             Image(systemName: "xmark.circle")
-                .frame(maxWidth: .infinity, alignment: .trailing)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .onTapGesture {
                     viewModel.dropFlightsList.send()
                 }.padding(.bottom, 16)
             
             ScrollView {
-                ForEach(viewModel.flightsList, id: \.self.id) {
+                ForEach(viewModel.list, id: \.self.id) {
                     ItemView($0)
                 }
             }
@@ -57,6 +59,6 @@ extension FlightResultsView {
 
 struct FlightResultsView_Previews: PreviewProvider {
     static var previews: some View {
-        FlightResultsView(viewModel: .init(service: DataService(), storage: .init(), page: 1))
+        FlightResultsView(viewModel: .init())
     }
 }

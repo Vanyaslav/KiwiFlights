@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		A16D4AA42A6C5EB60038B9E5 /* FlightSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D4AA32A6C5EB60038B9E5 /* FlightSearchViewModel.swift */; };
+		A178C0FD2A7800DA006BB88B /* KiwiFlightsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A178C0FC2A7800DA006BB88B /* KiwiFlightsTests.swift */; };
+		A17A2DD22A78E9CE0017064D /* FlightResultsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A17A2DD12A78E9CE0017064D /* FlightResultsViewModel.swift */; };
 		A1D463E12A6DA4E800A2D83A /* FlightsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D463E02A6DA4E800A2D83A /* FlightsResponse.swift */; };
 		A1D463E32A6DA88E00A2D83A /* FlightsQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D463E22A6DA88E00A2D83A /* FlightsQuery.swift */; };
 		A1D463E52A6DB12C00A2D83A /* FlightResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D463E42A6DB12C00A2D83A /* FlightResultsView.swift */; };
@@ -30,8 +32,21 @@
 		A1FB1D5C2A6BD606001DC537 /* PlaceQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1FB1D5B2A6BD606001DC537 /* PlaceQuery.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A178C0FE2A7800DA006BB88B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1FB1D332A6BBB59001DC537 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A1FB1D3A2A6BBB59001DC537;
+			remoteInfo = KiwiFlights;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		A16D4AA32A6C5EB60038B9E5 /* FlightSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightSearchViewModel.swift; sourceTree = "<group>"; };
+		A178C0FA2A7800DA006BB88B /* KiwiFlightsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KiwiFlightsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A178C0FC2A7800DA006BB88B /* KiwiFlightsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KiwiFlightsTests.swift; sourceTree = "<group>"; };
+		A17A2DD12A78E9CE0017064D /* FlightResultsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightResultsViewModel.swift; sourceTree = "<group>"; };
 		A1D463E02A6DA4E800A2D83A /* FlightsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightsResponse.swift; sourceTree = "<group>"; };
 		A1D463E22A6DA88E00A2D83A /* FlightsQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightsQuery.swift; sourceTree = "<group>"; };
 		A1D463E42A6DB12C00A2D83A /* FlightResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightResultsView.swift; sourceTree = "<group>"; };
@@ -50,6 +65,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A178C0F72A7800DA006BB88B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A1FB1D382A6BBB59001DC537 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -66,6 +88,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A178C0FB2A7800DA006BB88B /* KiwiFlightsTests */ = {
+			isa = PBXGroup;
+			children = (
+				A178C0FC2A7800DA006BB88B /* KiwiFlightsTests.swift */,
+			);
+			path = KiwiFlightsTests;
+			sourceTree = "<group>";
+		};
 		A1D463DE2A6DA4C400A2D83A /* Places */ = {
 			isa = PBXGroup;
 			children = (
@@ -114,6 +144,7 @@
 			isa = PBXGroup;
 			children = (
 				A1FB1D3D2A6BBB59001DC537 /* KiwiFlights */,
+				A178C0FB2A7800DA006BB88B /* KiwiFlightsTests */,
 				A1FB1D3C2A6BBB59001DC537 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -122,6 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				A1FB1D3B2A6BBB59001DC537 /* KiwiFlights.app */,
+				A178C0FA2A7800DA006BB88B /* KiwiFlightsTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -162,6 +194,7 @@
 				A16D4AA32A6C5EB60038B9E5 /* FlightSearchViewModel.swift */,
 				A1D463ED2A6E7C7F00A2D83A /* FlightSearchViewModel+Titles.swift */,
 				A1D463E42A6DB12C00A2D83A /* FlightResultsView.swift */,
+				A17A2DD12A78E9CE0017064D /* FlightResultsViewModel.swift */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -187,6 +220,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		A178C0F92A7800DA006BB88B /* KiwiFlightsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A178C1022A7800DA006BB88B /* Build configuration list for PBXNativeTarget "KiwiFlightsTests" */;
+			buildPhases = (
+				A178C0F62A7800DA006BB88B /* Sources */,
+				A178C0F72A7800DA006BB88B /* Frameworks */,
+				A178C0F82A7800DA006BB88B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A178C0FF2A7800DA006BB88B /* PBXTargetDependency */,
+			);
+			name = KiwiFlightsTests;
+			productName = KiwiFlightsTests;
+			productReference = A178C0FA2A7800DA006BB88B /* KiwiFlightsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		A1FB1D3A2A6BBB59001DC537 /* KiwiFlights */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A1FB1D492A6BBB5B001DC537 /* Build configuration list for PBXNativeTarget "KiwiFlights" */;
@@ -222,6 +273,10 @@
 				LastSwiftUpdateCheck = 1430;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					A178C0F92A7800DA006BB88B = {
+						CreatedOnToolsVersion = 14.3.1;
+						TestTargetID = A1FB1D3A2A6BBB59001DC537;
+					};
 					A1FB1D3A2A6BBB59001DC537 = {
 						CreatedOnToolsVersion = 14.3.1;
 					};
@@ -246,11 +301,19 @@
 			projectRoot = "";
 			targets = (
 				A1FB1D3A2A6BBB59001DC537 /* KiwiFlights */,
+				A178C0F92A7800DA006BB88B /* KiwiFlightsTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		A178C0F82A7800DA006BB88B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A1FB1D392A6BBB59001DC537 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -263,6 +326,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		A178C0F62A7800DA006BB88B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A178C0FD2A7800DA006BB88B /* KiwiFlightsTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A1FB1D372A6BBB59001DC537 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -272,6 +343,7 @@
 				A1FB1D522A6BC730001DC537 /* FlightSearchView.swift in Sources */,
 				A1FB1D3F2A6BBB59001DC537 /* KiwiFlightsApp.swift in Sources */,
 				A1D463E12A6DA4E800A2D83A /* FlightsResponse.swift in Sources */,
+				A17A2DD22A78E9CE0017064D /* FlightResultsViewModel.swift in Sources */,
 				A1D463E52A6DB12C00A2D83A /* FlightResultsView.swift in Sources */,
 				A16D4AA42A6C5EB60038B9E5 /* FlightSearchViewModel.swift in Sources */,
 				A1D463E82A6E626600A2D83A /* Int+Ext.swift in Sources */,
@@ -285,7 +357,49 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		A178C0FF2A7800DA006BB88B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A1FB1D3A2A6BBB59001DC537 /* KiwiFlights */;
+			targetProxy = A178C0FE2A7800DA006BB88B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		A178C1002A7800DA006BB88B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.baculak.tomas.KiwiFlightsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KiwiFlights.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KiwiFlights";
+			};
+			name = Debug;
+		};
+		A178C1012A7800DA006BB88B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.baculak.tomas.KiwiFlightsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KiwiFlights.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KiwiFlights";
+			};
+			name = Release;
+		};
 		A1FB1D472A6BBB5B001DC537 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -459,6 +573,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A178C1022A7800DA006BB88B /* Build configuration list for PBXNativeTarget "KiwiFlightsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A178C1002A7800DA006BB88B /* Debug */,
+				A178C1012A7800DA006BB88B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A1FB1D362A6BBB59001DC537 /* Build configuration list for PBXProject "KiwiFlights" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

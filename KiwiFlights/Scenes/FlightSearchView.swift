@@ -6,10 +6,14 @@
 //
 
 import SwiftUI
+import Combine
 // import Orbit
 
 struct FlightSearchView: View {
-    @StateObject var viewModel: FlightSearchViewModel
+    @ObservedObject
+    private var viewModel: FlightSearchViewModel
+    @EnvironmentObject
+    private var router: AppRouter
     
     init(viewModel: FlightSearchViewModel) {
         _viewModel = .init(wrappedValue: viewModel)
@@ -39,7 +43,7 @@ extension FlightSearchView {
         }
             .padding(.all, 32)
             .fullScreenCover(isPresented: $viewModel.isFlightResultsPresented) {
-                FlightResultsView(viewModel: viewModel)
+                router.showFlightResultView(viewModel.resultsViewModel)
             }
             .onAppear {
                 viewModel.manageInitialValues.send()
@@ -97,9 +101,11 @@ extension FlightSearchView {
     }
     
     func ComfirmButton() -> some View {
-        Button("Confirm") { viewModel.confirm.send() }
+        Button("CONFIRM") { viewModel.confirm.send() }
             .disabled(!viewModel.isConfirmButtonEnabled)
-            .opacity(viewModel.isConfirmButtonEnabled ? 1.0: 0.3)
+            .opacity(viewModel.isConfirmButtonEnabled ? 1.0 : 0.3)
+            .foregroundColor(.teal)
+            .font(.largeTitle)
             .padding(.bottom, 16)
     }
 }
@@ -163,6 +169,8 @@ extension FlightSearchView {
 
 struct FlightSearch_Previews: PreviewProvider {
     static var previews: some View {
-        FlightSearchView(viewModel: .init(service: DataService(), storage: .init(), page: 1))
+        FlightSearchView(viewModel: .init(service: DataService(),
+                                          storage: .init(),
+                                          page: 1))
     }
 }
