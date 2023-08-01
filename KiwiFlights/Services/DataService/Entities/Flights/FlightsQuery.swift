@@ -7,17 +7,20 @@
 
 import Foundation
 
-struct FlightsQuery: GraphQueryProtocol {
+struct FlightsQuery {
+    let variables: Encodable
     let query: String
-    private let departure: String
-    private let destination: String
     // possibly date or any other paramater could be dynamic
+    struct Variable: Encodable {
+        let departure: String
+        let destination: String
+    }
+    
     init(
         departure: String = "City:brno_cz",
         destination: String = "City:new-york-city_ny_us"
     ) {
-        self.departure = departure
-        self.destination = destination
+        variables = Variable(departure: departure, destination: destination)
         query =
             """
                 fragment stopDetails on Stop {
@@ -25,7 +28,7 @@ struct FlightsQuery: GraphQueryProtocol {
                     localTime
                     station { id name code type city { id legacyId name country { id name } } }
                 }
-                query onewayItineraries {
+                query GetOnewayItineraries($departure: String!, $destination: String!)  {
                     onewayItineraries(
                         filter: {
                             allowChangeInboundSource: false, allowChangeInboundDestination: false,
@@ -38,8 +41,8 @@ struct FlightsQuery: GraphQueryProtocol {
                         }, search: {
                         cabinClass: { applyMixedClasses: true, cabinClass: ECONOMY },
                         itinerary: {
-                            source: { ids: ["\(departure)"] },
-                            destination: { ids: ["\(destination)"] },
+                            source: { ids: [$departure] },
+                            destination: { ids: [$destination] },
                             outboundDepartureDate: {
                                 start: "2023-11-01T00:00:00",
                                 end: "2023-12-01T23:59:00"

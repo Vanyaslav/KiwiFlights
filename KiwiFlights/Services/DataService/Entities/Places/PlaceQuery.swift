@@ -7,21 +7,22 @@
 
 import Foundation
 
-protocol GraphQueryProtocol {
-    var query: String { get }
-}
 
-struct PlaceQuery: GraphQueryProtocol {
+struct PlaceQuery {
+    let variables: Encodable
     let query: String
-    private let searchString: String
+    
+    struct Variable: Encodable {
+        let term: String
+    }
     
     init(searchString: String = "") {
-        self.searchString = searchString
+        variables = Variable(term: searchString)
         query =
         """
-            query places {
+            query GetPlaces($term: String!) {
                 places(
-                    search: { term: "\(searchString)" },
+                    search: { term: $term },
                     filter: {
                         onlyTypes: [AIRPORT, CITY],
                         groupByCity: true
