@@ -186,5 +186,10 @@ class FlightSearchViewModel: ObservableObject {
         resultsViewModel.dropFlightsList
             .subscribe(reset)
             .store(in: &cancellables)
+        
+        resultsViewModel.dropFlightsList
+            .delay(for: 0.1, scheduler: RunLoop.main)
+            .subscribe(manageInitialValues)
+            .store(in: &cancellables)
     }
 }

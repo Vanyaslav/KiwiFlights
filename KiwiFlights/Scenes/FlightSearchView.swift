@@ -15,6 +15,9 @@ struct FlightSearchView: View {
     @EnvironmentObject
     private var router: AppRouter
     
+    @FocusState private var departureFocused: Bool
+    @FocusState private var destinationFocused: Bool
+    
     init(viewModel: FlightSearchViewModel) {
         _viewModel = .init(wrappedValue: viewModel)
     }
@@ -58,6 +61,7 @@ extension FlightSearchView {
             TextField("From", text: $viewModel.departure)
                 .textFieldStyle(.roundedBorder)
                 .autocorrectionDisabled()
+                .focused($departureFocused)
             
             if viewModel.isDepartureActive {
                 ScrollView {
@@ -83,6 +87,7 @@ extension FlightSearchView {
             TextField("To", text: $viewModel.destination)
                 .textFieldStyle(.roundedBorder)
                 .autocorrectionDisabled()
+                .focused($destinationFocused)
             
             if viewModel.isDestinationActive {
                 ScrollView {
@@ -101,7 +106,11 @@ extension FlightSearchView {
     }
     
     func ComfirmButton() -> some View {
-        Button("CONFIRM") { viewModel.confirm.send() }
+        Button("CONFIRM") {
+            viewModel.confirm.send()
+            departureFocused = false
+            destinationFocused = false
+        }
             .disabled(!viewModel.isConfirmButtonEnabled)
             .opacity(viewModel.isConfirmButtonEnabled ? 1.0 : 0.3)
             .foregroundColor(.teal)
