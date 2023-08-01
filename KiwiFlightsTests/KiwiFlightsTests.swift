@@ -11,18 +11,12 @@ import XCTest
 final class KiwiFlightsTests: XCTestCase {
 
     func testSearchViewModelDeallocation() {
-        var model: FlightSearchViewModel? = FlightSearchViewModel(service: DataService(),
+        let model: FlightSearchViewModel? = FlightSearchViewModel(service: DataService(),
                                                                   storage: .init(),
                                                                   page: 1)
         
-        weak var weakModel: FlightSearchViewModel?
-        
-        autoreleasepool {
-            weakModel = model
-            model = nil
+        addTeardownBlock { [weak model] in
+            XCTAssertNil(model, "View model should be deallocated ⚠️")
         }
-
-        XCTAssertNil(weakModel, "View model should be deallocated")
     }
-
 }
