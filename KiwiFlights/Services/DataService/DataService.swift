@@ -13,19 +13,18 @@ struct AnyEncodable: Encodable {
         init(_ value: Encodable) {
             self.value = value
         }
+    
         func encode(to encoder: Encoder) throws {
             try value.encode(to: encoder)
         }
 }
 
-protocol GraphQueryProtocol {
+protocol GraphQueryProtocol: Encodable {
     var query: String { get }
     var variables: AnyEncodable { get }
 }
 
-protocol PaylodProtocol: Encodable, GraphQueryProtocol {}
-
-struct Payload: PaylodProtocol {
+struct Payload: GraphQueryProtocol {
     let query: String
     let variables: AnyEncodable
     
@@ -56,21 +55,31 @@ final class DataService: DataProtocol {
 }
 
 extension DataService {
-    private func apiCall<T: Decodable>(
-        response: T.Type,
-        payload: PaylodProtocol
-    ) -> AnyPublisher<T, Error> {
-        guard let url = URL(string: "https://api.skypicker.com/umbrella/v2/graphql") else {
-            return Fail(error: NSError(domain: "Not valid URL", code: 1))
-                .eraseToAnyPublisher()
-        }
-        
+    var url: URL? {
+        URL(string: "https://api.skypicker.com/umbrella/v2/graphql")
+    }
+    
+    func request(url: URL) -> URLRequest {
         var request = URLRequest(url: url)
             request.httpMethod = "POST"
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             request.addValue("application/json", forHTTPHeaderField: "Accept")
+        return request
+    }
+}
+
+extension DataService {
+    private func apiCall<T: Decodable>(
+        response: T.Type,
+        payload: GraphQueryProtocol
+    ) -> AnyPublisher<T, Error> {
+        guard let url = url else {
+            return Fail(error: NSError(domain: "Not valid URL", code: 1))
+                .eraseToAnyPublisher()
+        }
         
-        request.httpBody = try? JSONEncoder().encode(payload)
+        var request = request(url: url)
+            request.httpBody = try? JSONEncoder().encode(payload)
         
         print(payload)
         
