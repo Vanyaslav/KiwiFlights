@@ -34,7 +34,7 @@ struct FlightSearchView: View {
 extension FlightSearchView {
     func SearchOffer() -> some View {
         VStack {
-            Text("Choose your route")
+            Text(viewModel.searchTitle)
                 .font(.largeTitle)
                 .padding(.bottom, 32)
             HStack {
@@ -127,7 +127,7 @@ extension FlightSearchView {
             }
             
             Spacer()
-            Text("FLIGHT OFFER")
+            Text(viewModel.offerTitle)
                 .font(.largeTitle)
                 .fontWeight(.thin)
             DestinationImage()
@@ -152,14 +152,22 @@ extension FlightSearchView {
     
     func RouteView() -> some View {
         VStack {
-            Text(viewModel.departureCityName)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            Text(viewModel.destinationCityName)
-                .frame(maxWidth: .infinity, alignment: .trailing)
+            VStack {
+                Text("From")
+                Text(viewModel.departureCityName)
+                    .font(.largeTitle)
+                    .fontWeight(.semibold)
+                    .padding([.leading, .trailing], 32)
+            }.frame(maxWidth: .infinity, alignment: .leading)
+            
+            VStack {
+                Text("To")
+                Text(viewModel.destinationCityName)
+                    .font(.largeTitle)
+                    .fontWeight(.semibold)
+                    .padding([.leading, .trailing], 32)
+            }.frame(maxWidth: .infinity, alignment: .trailing)
         }
-            .font(.largeTitle)
-            .fontWeight(.semibold)
-            .padding([.leading, .trailing], 32)
     }
     
     func DestinationImage() -> some View {

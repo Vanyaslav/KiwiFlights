@@ -8,6 +8,14 @@
 import Foundation
 
 extension FlightSearchViewModel {
+    var searchTitle: String {
+        "Choose your route \(page)"
+    }
+    
+    var offerTitle: String {
+        "FLIGHT OFFER \(page)"
+    }
+    
     var prefferedFlightURL: URL? {
         guard let id = preferredFlight?.legacyId
         else { return nil }

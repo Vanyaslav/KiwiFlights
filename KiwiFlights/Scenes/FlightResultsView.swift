@@ -23,6 +23,14 @@ struct FlightResultsView: View {
                 .onTapGesture {
                     viewModel.dropFlightsList.send()
                 }.padding(.bottom, 16)
+            HStack {
+                Text(viewModel.list.first?.departureCityName ?? "" )
+                Text("->")
+                Text(viewModel.list.first?.destinationCityName ?? "")
+                    
+            }
+                .font(.title)
+                .fontWeight(.heavy)
             
             ScrollView {
                 ForEach(viewModel.list, id: \.self.id) {
@@ -36,12 +44,9 @@ struct FlightResultsView: View {
 extension FlightResultsView {
     func ItemView(_ data: FlightsResponse.Itinerary) -> some View {
         HStack {
-            HStack {
-                Text(data.departureCityName)
-                Text("->")
-                Text(data.destinationCityName)
-            }.frame(maxWidth: .infinity, alignment: .leading)
-            
+            Text(data.sector?.sectorSegments.first?.segment.source.localTime.shortTimeNormal ?? "")
+                .frame(maxWidth: .infinity, alignment: .leading)
+
             HStack {
                 Text(data.duration?.hoursFormatFromSecondsShort ?? "")
                 Text(data.flightPrice)

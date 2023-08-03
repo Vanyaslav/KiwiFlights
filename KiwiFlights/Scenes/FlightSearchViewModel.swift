@@ -71,21 +71,29 @@ class FlightSearchViewModel: ObservableObject {
             .map { $0.data.places.edges.map { $0.node } }
             .bind(to: &$airportList)
         
+        let destinationListActions = Publishers.CombineLatest4(
+            $isDestinationActive,
+            $airportList,
+            storage.$takenDestinations,
+            $selectedDeparture
+        )
+            .filter { $0.0 }
+            .map { ($0.1, ($0.2 + [$0.3])) }
+            .map { Array(OrderedSet($0.0).subtracting($0.1)) }
+        
+        let departureListActions = Publishers.CombineLatest4(
+            $isDepartureActive,
+            $airportList,
+            storage.$takenDepartures,
+            $selectedDestination
+        )
+            .filter { $0.0 }
+            .map { ($0.1, ($0.2 + [$0.3])) }
+            .map { Array(OrderedSet($0.0).subtracting($0.1)) }
+        
         Publishers.Merge(
-            Publishers.CombineLatest3(
-                $isDestinationActive,
-                $airportList,
-                storage.$takenDestinations
-            )
-                .filter { $0.0 }
-                .map { Array(OrderedSet($0.1).subtracting($0.2)) },
-            Publishers.CombineLatest3(
-                $isDepartureActive,
-                $airportList,
-                storage.$takenDepartures
-            )
-                .filter { $0.0 }
-                .map { Array(OrderedSet($0.1).subtracting($0.2)) }
+            destinationListActions,
+            departureListActions
         ).bind(to: &$airportToShowList)
         
         // manage departure

@@ -31,15 +31,19 @@ struct FlightsQuery {
                 query GetOnewayItineraries($departure: String!, $destination: String!)  {
                     onewayItineraries(
                         filter: {
-                            allowChangeInboundSource: false, allowChangeInboundDestination: false,
-                            allowDifferentStationConnection: true, allowOvernightStopover: true,
-                            contentProviders: [KIWI], limit: 10, showNoCheckedBags: true,
+                            allowChangeInboundSource: false,
+                            allowChangeInboundDestination: false,
+                            allowDifferentStationConnection: true,
+                            allowOvernightStopover: true,
+                            contentProviders: [KIWI],
+                            limit: 10,
+                            showNoCheckedBags: true,
                             transportTypes: [FLIGHT]
                         }, options: {
-                        currency: "EUR", partner: "skypicker", sortBy: QUALITY,
-                        sortOrder: ASCENDING, sortVersion: 4, storeSearch: true
+                            currency: "EUR", partner: "skypicker", sortBy: QUALITY,
+                            sortOrder: ASCENDING, sortVersion: 4, storeSearch: true
                         }, search: {
-                        cabinClass: { applyMixedClasses: true, cabinClass: ECONOMY },
+                            cabinClass: { applyMixedClasses: true, cabinClass: ECONOMY },
                         itinerary: {
                             source: { ids: [$departure] },
                             destination: { ids: [$destination] },

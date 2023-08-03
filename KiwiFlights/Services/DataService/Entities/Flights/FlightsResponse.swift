@@ -59,6 +59,7 @@ extension FlightsResponse {
     
     struct FlightDetails: Decodable {
         let station: AirportDetails
+        let localTime: String
     }
     
     struct AirportDetails: Decodable {
