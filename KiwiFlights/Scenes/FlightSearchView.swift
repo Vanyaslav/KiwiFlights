@@ -44,11 +44,15 @@ extension FlightSearchView {
             Spacer()
             ComfirmButton()
         }
+            .contentShape(Rectangle())
             .padding(.all, 32)
             .fullScreenCover(isPresented: $viewModel.isFlightResultsPresented) {
                 router.showFlightResultView(viewModel.resultsViewModel)
             }
             .onAppear {
+                viewModel.manageInitialValues.send()
+            }
+            .onTapGesture {
                 viewModel.manageInitialValues.send()
             }
     }
