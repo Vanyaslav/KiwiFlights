@@ -79,9 +79,15 @@ extension DataService {
         }
         
         var request = request(url: url)
-            request.httpBody = try? JSONEncoder().encode(payload)
+        // even the GraphQueryProtocol conforms to Encdable -> for the sake of things, let's make it as a complete solution
+        do {
+            request.httpBody = try JSONEncoder().encode(payload)
+        } catch {
+            return Fail(error: error)
+                .eraseToAnyPublisher()
+        }
         
-        print(payload)
+        debugPrint(payload)
         
         return URLSession.shared
             .dataTaskPublisher(for: request)

@@ -40,6 +40,7 @@ final class UserDefault<T: Codable>: NSObject {
             return subject.value
         }
         set {
+            // while T conforms to Codable -> this should be fine
             if let encoded = try? JSONEncoder().encode(newValue) {
                 userDefaults.setValue(encoded, forKey: key)
             }
